@@ -1,61 +1,106 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<!-- Basic Page Needs
+  ================================================== -->
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="css/main.css">
-	<link rel="stylesheet" href="https://cdn.moot.it/1/moot.css">
-	<link href='http://fonts.googleapis.com/css?family=Gilda+Display' rel='stylesheet' type='text/css'>	
-	<title>Enterprise: EFI Linux Loader</title>
+	<title>Enterprise EFI Linux Loader</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="stylesheets/base.css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css">
+	<link rel="stylesheet" href="stylesheets/layout.css">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+
 </head>
 <body>
-	<div id="paneSwitcher">
-		<a href="javascript:void(0)" onclick="$('#moot').slideUp();$('#mainContent').slideDown();">Main Page</a> |
-		<a href="javascript:void(0)" onclick="$('#moot').slideDown();$('#mainContent').slideUp();">Discussion Board</a>
-	</div>
-    <div class="fork-me">
-        <a href="https://github.com/SevenBits/Enterprise" target="_blank">
-           <img src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub">
-        </a>
-    </div>
-	<div id="mainContent">
-		<h1>Enterprise: EFI Linux Loader</h1>
-    	<h3>A Slightly Pompous Attempt to Boot Linux on Intel Macs</h3>
-    
-    	<p>Enterprise (named after the Starship Enterprise from <i>Star Trek</i>), is an EFI program that is designed to assist in loading Linux distributions on USB sticks on Intel Macs, something that is continously regarded as being near to impossible due to EFI quirks.</p>
-    	<p>The program is quite unique. It is written in <a href="http://en.wikipedia.org/wiki/C_(programming_language)" target="_blank">C</a>, and can be compiled to run on both 32-bit and 64-bit EFI firmware types. More information coming shortly!</p>
-		<p>It is designed to compliment <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac Linux USB Loader</a>, though it can also be used separately (albeit with some setup work). The purpose of Enterprise is as the first stage in a two-stage booting process for Mac Linux USB Loader-created USB drives.</p>
+
+
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<!-- Delete everything in this .container and get started on your own site! -->
+
+	<div class="container">
+		<div class="sixteen columns">
+			<h1 class="remove-bottom" style="margin-top: 40px">Enterprise</h1>
+			<h5>An EFI Linux Loader for UEFI Macs</h5>
+			<hr />
+		</div>
         
-        <h4>Installation and Use</h4>
+        <div class="row">
+		<div class="four columns">
+			<h3>Get Enterprise</h3>
+			<p>Current Version: 0.1.1</p>
+            <p>Enterprise can be obtained from the official repository on Github. Click on the links below to be directed to the appropriate pages:</p>
+            
+            <p><strong>Stable:</strong></p>
+            <p>There are currently no stable releases.</p>
+            
+            <p><strong>Unstable:</strong></p>
+            <p><a href="javascript:void(0);">Version 0.1.1</a> (19 December 2013)</p>
+            
+            <p>Please note that obtaining Enterprise in this fashion means doing lots of setup work. If you simply want to create a bootable USB, please consider using <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac Linux USB Loader</a>, which sets up Enterprise for you.</p>
+		</div>
+		<div class="twelve columns">
+			<h3>What Is Enterprise?</h3>
+            <div>
+                <iframe src="http://ghbtns.com/github-btn.html?user=sevenbits&repo=enterprise&type=watch&count=true&size=small" allowtransparency="true" frameborder="0" scrolling="0" width="150" height="20" style="float: left;"></iframe>
+                <a href="https://travis-ci.org/SevenBits/Enterprise" style="float: left;">
+                    <img src="https://travis-ci.org/SevenBits/Enterprise.png" alt="Travis Build Status">
+                </a>
+            </div>
+            <br class="clear" />
+			<p>Enterprise (named after the Starship Enterprise from <em>Star Trek</em>) is an EFI program that is designed to assist in booting Linux distributions on USB sticks on Intel Macs, something that is continously regarded as being near to impossible due to EFI quirks and really quite poor support from Linux distributions.</p>
+            <p>The program is quite unique. It is written in C, and can be compiled to run on both 32&#45;bit and 64&#45;bit EFI firmware types. Right now, all official downloads are for the <strong>64-bit architecture</strong> only.</p>
+            <p>It is designed to compliment <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac Linux USB Loader</a>, though it can also be used separately (albeit with some setup work). The purpose of Enterprise is as the first stage in a two-stage booting process for Mac Linux USB Loader-created USB drives.</p>
+            <p>Please note that this page is oriented for technical users, such as hardware and/or software enthuasists, programmers, and people who like to hack their firmware. It is not intended for casual users &#45; beware!</p>
+            
+            <h4>The Basics</h4>
+            
+            <p>Once upon a time, everything was happy in computer-land. Our PCs were booting, our memory sufficed, and the children were happy. But then Mr. Turing had to curse us with the &lt;sarcasm&gt; evil of technological progress &lt;&frasl;sarcasm&gt;, and eventually our nice, peaceful solutions didn't work anymore. All of a sudden, our multi&#45;terabyte drives couldn't be booted from, and our old 16&#45;bit BIOSes couldn't boot our cool, newfangled 64&#45;bit multicore operating systems. Woe was us!</p>
+            <p>But our computer engineers, clever as they are, dug up an old, largely forgotten future&#45;proof boot specification, UEFI. </p>
+
+            <h4>Installation and Use</h4>
+
+            <p>Enterprise is intended as a tool to be used alongside Mac Linux USB Loader, and so it is not really intended to be installed in the same manner as one would install a traditional bootloader like GRUB. That being said, it is possible to use Enterprise without Mac Linux USB Loader, as they are wholly separate tools, however in this circumstance additional setup is required.</p>
+            <p>To get the best performance from Enterprise, and to take advantage of any super cool stuff I add to it, you should download the source code, as the official repository includes a number of tools to assist in setup.</p>
+		</div>
+        </div> <!-- end row -->
         
-        <p>Enterprise is intended as a tool to be used alongside Mac Linux USB Loader, and so it is not really intended to be installed in the same manner as one would install a traditional bootloader like GRUB. That being said, it <em>is</em> possible to use Enterprise without Mac Linux USB Loader, as they are wholly separate tools, however in this circumstance additional setup is required.</p>
-        <p>To get the best performance from Enterprise, and to take advantage of any super cool stuff I add to it, you <em>should</em> download the source code, as the official repository includes a number of tools to assist in setup.</p>
-        
-        
-        <div class="bottom-tools">
-            <!-- Share -->
-            <iframe src="http://ghbtns.com/github-btn.html?user=sevenbits&repo=enterprise&type=watch&count=true&size=large" allowtransparency="true" frameborder="0" scrolling="0" width="150" height="50" class="left-float"></iframe>
-            <a href="https://travis-ci.org/SevenBits/Enterprise" class="left-float">
-                <img src="https://travis-ci.org/SevenBits/Enterprise.png" alt="Travis Build Status">
-            </a>
-        </div>
-	</div>
-	<div id="moot">
-		<a class="moot" href="https://moot.it/i/enterprise-linux-uefi">enterprise-linux-uefi forums</a>
-	</div>
+        <div class="row">
+            <div class="three.columns offset-by-thirteen">
+                <small>Proudly made in America!</small>
+                <img src="images/united_states_of_america.png" alt="The USA flag" style="vertical-align:text-bottom;"/>
+            </div>
+        </div> <!-- end row -->
+
+	</div><!-- container -->
+
+
+<!-- End Document
+================================================== -->
 </body>
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="https://cdn.moot.it/1/moot.min.js"></script>
-<script>
-    function hideAllPanes() {
-        $('#moot').slideUp();
-        $('#mainContent').slideUp();
-    }
-</script>
-<script>
-	$('#moot').ready(function() {
-		javascript:$('#moot').slideUp();
-	});
-</script>
 </html>
