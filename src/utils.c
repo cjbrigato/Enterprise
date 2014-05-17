@@ -87,6 +87,16 @@ VOID DisplayErrorText(CHAR16 *string) {
 #ifdef __APPLE__
 	#pragma mark - Character conversion functions missing from GNU-EFI
 #endif
+CHAR8* strcpya(CHAR8 *target, const CHAR8 *source) {
+	int i;
+
+	for(i = 0; source[i] != '\0'; ++i)
+		target[i] = source[i];
+	target[i] = source[i];
+
+	return target;
+}
+
 CHAR8* UTF16toASCII(CHAR16 *InString, UINTN InLength) {
 	CHAR8 *OutString, *InAs8;
 	UINTN i = 0;
@@ -300,4 +310,16 @@ skip:
 	*key_ret = line;
 	*value_ret = value;
 	return line;
+}
+
+#ifdef __APPLE__
+	#pragma mark - Utility functions to allocate memory.
+#endif
+VOID SetupLinuxBootOption(LinuxBootOption *lbo) {
+	lbo->name = (CHAR8 *)AllocateZeroPool(100);
+	lbo->file_name = (CHAR8 *)AllocateZeroPool(100);
+	lbo->distro_family = (CHAR8 *)AllocateZeroPool(100);
+	lbo->kernel_path = (CHAR8 *)AllocateZeroPool(100);
+	lbo->initrd_path = (CHAR8 *)AllocateZeroPool(100);
+	lbo->boot_folder = (CHAR8 *)AllocateZeroPool(100);
 }

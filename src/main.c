@@ -18,6 +18,7 @@
 
 #include <efi.h>
 #include <efilib.h>
+#include <stdbool.h>
 
 #include "main.h"
 #include "menu.h"
@@ -32,16 +33,18 @@ static const EFI_GUID grub_variable_guid = {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0
 #define VERSION_MINOR 2
 #define VERSION_PATCH 1
 
-static BootableLinuxDistro* ReadConfigurationFile(const CHAR16 *name);
+static void ReadConfigurationFile(const CHAR16 *name);
 static EFI_STATUS console_text_mode(VOID);
 
 static EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;
 
 static EFI_HANDLE global_image;
+static BootableLinuxDistro *root;
 
 /* entry function for EFI */
 EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
+	/* Setup key GNU-EFI library and its functions first. */
 	EFI_STATUS err; // Define an error variable.
 	
 	InitializeLib(image_handle, systab); // Initialize EFI.
@@ -64,6 +67,13 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 		return EFI_LOAD_ERROR;
 	}
 	
+	/* Setup global variables. */
+	int i;
+	for (i = 0; i < PRESET_OPTIONS_SIZE; i++) {
+		preset_options_array[i] = 0; // We don't *need* to initalize, but do it anyway.
+	}
+	
+	/* Print the welcome message. */
 	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.
 	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut); // Clear the screen.
 	Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Print the welcome information.
@@ -71,16 +81,16 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE); // Disable display of the cursor.
 	
 	BOOLEAN can_continue = TRUE;
-	LinuxBootOption *result;
 	
-	// Check to make sure that we have our configuration file and GRUB bootloader.
+	/* Check to make sure that we have our configuration file and GRUB bootloader. */
 	if (!FileExists(root_dir, L"\\efi\\boot\\.MLUL-Live-USB")) {
 		DisplayErrorText(L"Error: can't find configuration file.\n");
 	} else {
-		/*result = ReadConfigurationFile(L"\\efi\\boot\\.MLUL-Live-USB");
-		if (!result) {
+		ReadConfigurationFile(L"\\efi\\boot\\.MLUL-Live-USB");
+		if (!root) {
+			DisplayErrorText(L"Error: configuration file parsing error.\n");
 			can_continue = FALSE;
-		}*/
+		}
 	}
 	
 	if (!FileExists(root_dir, L"\\efi\\boot\\boot.efi")) {
@@ -95,18 +105,18 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	
 	// Check if there is a persistence file present.
 	// TODO: Support distributions other than Ubuntu.
-	/*if (FileExists(root_dir, L"\\casper-rw") &&
-		strcmpa((CHAR8 *)"Ubuntu", result->distro_family) == 0 &&
-		can_continue) {
+	if (FileExists(root_dir, L"\\casper-rw") && can_continue) {
 		DisplayColoredText(L"Found a persistence file! You can enable persistence by " \
 							"selecting it in the Modify Boot Settings screen.\n");
-	}*/
+		
+		preset_options_array[4] = true;
+	}
 	
 	// Display the menu where the user can select what they want to do.
 	if (can_continue) {
 		DisplayMenu();
 	} else {
-		Print(L"Cannot continue because core files are missing. Restarting...\n");
+		Print(L"Cannot continue because core files are missing or damaged.\nRestarting...\n");
 		uefi_call_wrapper(BS->Stall, 1, 1000 * 1000);
 		return EFI_LOAD_ERROR;
 	}
@@ -122,23 +132,36 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params) {
 	CHAR8 *sized_str = UTF16toASCII(params, StrLen(params) + 1);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", sized_str,
 		sizeof(sized_str[0]) * strlena(sized_str) + 1, FALSE);
+		
+	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.
+	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut); // Clear the screen.
+	Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Print the welcome information.
+	Print(L"\nBoot Selector:\n");
+	Print(L"    The following distributions have been detected on this USB.\n");
+	Print(L"    Press the key corresponding to the number of the option that you want.\n\n");
+	uefi_call_wrapper(ST->ConIn->Reset, 2, ST->ConIn, FALSE);
+	uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE); // Disable display of the cursor.
 	
-	
-	BootableLinuxDistro *root = ReadConfigurationFile(L"\\efi\\boot\\.MLUL-Live-USB");
-	if (!root) {
-		DisplayErrorText(L"Error: configuration file parsing error.\n");
-		return EFI_LOAD_ERROR;
-	}
-	
-	BootableLinuxDistro *conductor = root;
+	// Print out the available Linux distributions on this USB.
+	BootableLinuxDistro *conductor = root->next; // The first item is blank. I'll fix this later.
 	int iteratorIndex = 0;
 	while ( conductor != NULL ) {
-    	conductor = conductor->next;
-    	
-    	Print(L"%d %s\n", (iteratorIndex + 1), conductor->bootOption->name);
-    	
-    	iteratorIndex++;
+		if (conductor->bootOption->name) {
+			Print(L"    %d - %a\n", (iteratorIndex + 1), conductor->bootOption->name);
+		}
+		
+		conductor = conductor->next;
+		
+		iteratorIndex++;
 	}
+	Print(L"\n    Press any other key to reboot the system.\n");
+	
+	// Get the key press.
+	UINT64 key;
+	err = key_read(&key, TRUE);
+	int index = key - '0';
+	Print(L"You selected option %d.\n", index);
+	
 	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 	/*CHAR8 *kernel_path = boot_params->kernel_path;
 	CHAR8 *initrd_path = boot_params->initrd_path;
@@ -149,11 +172,12 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params) {
 		sizeof(initrd_path[0]) * strlena(initrd_path) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_BootFolder", boot_folder,
 		sizeof(boot_folder[0]) * strlena(boot_folder) + 1, FALSE);*/
-		
+	
 	FreePool(conductor);
 	FreePool(root); // Free the now-unneeded memory.
 	
 	// Load the EFI boot loader image into memory.
+	uefi_call_wrapper(BS->Stall, 1, 5 * 1000 * 1000);
 	path = FileDevicePath(this_image->DeviceHandle, L"\\efi\\boot\\boot.efi");
 	err = uefi_call_wrapper(BS->LoadImage, 6, FALSE, global_image, path, NULL, 0, &image);
 	if (EFI_ERROR(err)) {
@@ -180,9 +204,9 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params) {
 	return EFI_SUCCESS;
 }
 
-static BootableLinuxDistro* ReadConfigurationFile(const CHAR16 *name) {
+static void ReadConfigurationFile(const CHAR16 *name) {
 	/* This will always stay consistent, otherwise we'll lose the list in memory.*/
-	BootableLinuxDistro *root = AllocateZeroPool(sizeof(BootableLinuxDistro));
+	root = AllocateZeroPool(sizeof(BootableLinuxDistro));
 	BootableLinuxDistro *conductor; // Will point to each node as we traverse the list.
 	
 	conductor = root; // Start by pointing at the first element.
@@ -202,10 +226,14 @@ static BootableLinuxDistro* ReadConfigurationFile(const CHAR16 *name) {
 		 */
 		// The user has put a given a distribution entry.
 		if (strcmpa((CHAR8 *)"entry", key) == 0) {
-			Print(L"Encountered an entry: %s\n", value);
-			conductor->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
-			conductor->bootOption->name = value;
-			conductor->next = 0;
+			BootableLinuxDistro *new = AllocateZeroPool(sizeof(BootableLinuxDistro));
+			new->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
+			SetupLinuxBootOption(new->bootOption);
+			strcpya(new->bootOption->name, value);
+				
+			conductor->next = new;
+			new->next = NULL;
+			conductor = conductor->next; // subsequent operations affect the new link in the chain
 		}
 		// The user has given us a distribution family.
 		else if (strcmpa((CHAR8 *)"family", key) == 0) {
@@ -222,14 +250,15 @@ static BootableLinuxDistro* ReadConfigurationFile(const CHAR16 *name) {
 				Print(L"Distribution family %s is not supported.\n", ASCIItoUTF16(value, strlena(value)));
 				
 				FreePool(conductor->bootOption);
-				return NULL;
+				root = 0;
+				return;
 			}
 		// The user is manually specifying information; override any previous values.
 		} else if (strcmpa((CHAR8 *)"kernel", key) == 0) {
 			conductor->bootOption->kernel_path = value;
 		} else if (strcmpa((CHAR8 *)"initrd", key) == 0) {
 			conductor->bootOption->initrd_path = value;
-		} else if (strcmpa((CHAR8 *)"root", key) == 0) { 
+		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
 			conductor->bootOption->boot_folder = value;
 		} else {
 			Print(L"Unrecognized configuration option: %s.\n", ASCIItoUTF16(key, strlena(key)));
@@ -237,7 +266,6 @@ static BootableLinuxDistro* ReadConfigurationFile(const CHAR16 *name) {
 	}
 	
 	Print(L"Done reading configuration file.\n");
-	return root;
 }
 
 static EFI_STATUS console_text_mode(VOID) {

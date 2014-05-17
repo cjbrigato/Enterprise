@@ -18,10 +18,12 @@
 
 #include <efi.h>
 #include <efilib.h>
+#include <stdbool.h>
 
 #include "menu.h"
 #include "main.h"
 #include "utils.h"
+#include "distribution.h"
 
 #define KEYPRESS(keys, scan, uni) ((((UINT64)keys) << 32) | ((scan) << 16) | (uni))
 #define EFI_SHIFT_STATE_VALID           0x80000000
@@ -35,7 +37,7 @@
 #define KEYCHAR(k) ((k) & 0xffff)
 #define CHAR_CTRL(c) ((c) - 'a' + 1)
 
-static EFI_STATUS key_read(UINT64 *key, BOOLEAN wait) {
+EFI_STATUS key_read(UINT64 *key, BOOLEAN wait) {
 	#define EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL_GUID \
 		{ 0xdd9e7534, 0x7762, 0x4698, { 0x8c, 0x14, 0xf5, 0x85, 0x17, 0xa6, 0x25, 0xaa } }
 
@@ -177,7 +179,7 @@ EFI_STATUS DisplayMenu(void) {
 	if (key == '1') {
 		BootLinuxWithOptions(L"");
 	} else if (key == '2') {
-		ConfigureKernel(boot_options);
+		ConfigureKernel(boot_options, preset_options_array, PRESET_OPTIONS_SIZE);
 	} else {
 		// Reboot the system.
 		err = uefi_call_wrapper(RT->ResetSystem, 4, EfiResetCold, EFI_SUCCESS, 0, NULL);
@@ -200,12 +202,19 @@ static int options_array[20];
 		Print(string); \
 	}
 
-EFI_STATUS ConfigureKernel(CHAR16 *options) {
+EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_options_length) {
 	UINT64 key;
 	EFI_STATUS err;
 	
 	StrCpy(options, L""); // Not strictly necessary, but it doesn't hurt to be double safe.
 	
+	// Copy everything from our preset options array into our options array.
+	int i;
+	for (i = 0; i < preset_options_length; i++) {
+		options_array[i] = preset_options[i];
+	}
+	
+	// Enter a loop where we show the menu.
 	do {
 		uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
 		/*

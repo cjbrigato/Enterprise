@@ -20,7 +20,9 @@
 #ifndef _menu_h
 #define _menu_h
 
+EFI_STATUS key_read(UINT64 *key, BOOLEAN wait);
+
 EFI_STATUS DisplayMenu(void);
-EFI_STATUS ConfigureKernel(CHAR16 *options);
+EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_options_length);
 
 #endif

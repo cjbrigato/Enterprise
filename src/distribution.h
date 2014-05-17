@@ -16,9 +16,14 @@
  *
  */
 
+#include <stdbool.h>
+
 #pragma once
 #ifndef _distribution_h
 #define _distribution_h
+
+#define PRESET_OPTIONS_SIZE 20
+extern bool preset_options_array[PRESET_OPTIONS_SIZE];
 
 CHAR8* KernelLocationForDistributionName(CHAR8 *name, OUT CHAR8 **boot_folder);
 CHAR8* InitRDLocationForDistributionName(CHAR8 *name);
