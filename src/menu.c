@@ -271,6 +271,10 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		StrCat(options, L"toram ");
 	}
 	
+	if (options_array[6]) {
+		StrCat(options, L"debug ");
+	}
+	
 	if (options_array[8]) {
 		StrCat(options, L"gpt ");
 	}
