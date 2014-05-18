@@ -258,7 +258,8 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		 * that they think might facilitate booting Linux and add it to the options
 		 * string once they press 0.
 		 */
-		DisplayColoredText(L"\n\n    Configure Kernel Options:\n");
+		Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+		DisplayColoredText(L"\n    Configure Kernel Options:\n");
 		Print(L"    Press the key corresponding to the number of the option to toggle.\n");
 		OPTION(L"\n    1) nomodeset - Disable kernel mode setting.", 0);
 		OPTION(L"\n    2) acpi=off - Disable ACPI.", 1);
