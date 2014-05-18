@@ -167,7 +167,7 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.
 	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut); // Clear the screen.
 	Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Print the welcome information.
-	Print(L"\nBoot Selector:\n");
+	DisplayColoredText(L"\n    Boot Selector:\n");
 	Print(L"    The following distributions have been detected on this USB.\n");
 	Print(L"    Press the key corresponding to the number of the option that you want.\n\n");
 	uefi_call_wrapper(ST->ConIn->Reset, 2, ST->ConIn, FALSE);
@@ -178,7 +178,7 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 	int iteratorIndex = 0;
 	while ( conductor != NULL ) {
 		if (conductor->bootOption->name) {
-			Print(L"    %d - %a\n", (iteratorIndex + 1), conductor->bootOption->name);
+			Print(L"    %d) %a\n", (iteratorIndex + 1), conductor->bootOption->name);
 		}
 		
 		conductor = conductor->next;
