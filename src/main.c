@@ -24,14 +24,9 @@
 #include "menu.h"
 #include "utils.h"
 #include "distribution.h"
-#define banner L"Welcome to Enterprise! - Version %d.%d.%d\n"
 
 static const EFI_GUID enterprise_variable_guid = {0x4a67b082, 0x0a4c, 0x41cf, {0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f}};
 static const EFI_GUID grub_variable_guid = {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B,0x8C}};
-
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 2
-#define VERSION_PATCH 1
 
 static void ReadConfigurationFile(const CHAR16 *name);
 static EFI_STATUS console_text_mode(VOID);
@@ -40,7 +35,7 @@ static EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;
 
 static EFI_HANDLE global_image;
-static BootableLinuxDistro *root;
+BootableLinuxDistro *root;
 
 /* entry function for EFI */
 EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
@@ -125,7 +120,11 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	return EFI_SUCCESS;
 }
 
-EFI_STATUS BootLinuxWithOptions(CHAR16 *params) {
+BootableLinuxDistro* GetDistributionListRoot() {
+	return root;
+}
+
+EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 	EFI_STATUS err;
 	EFI_HANDLE image;
 	EFI_DEVICE_PATH *path;
@@ -134,37 +133,16 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params) {
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", sized_str,
 		sizeof(sized_str[0]) * strlena(sized_str) + 1, FALSE);
 		
-	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.
-	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut); // Clear the screen.
-	Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Print the welcome information.
-	Print(L"\nBoot Selector:\n");
-	Print(L"    The following distributions have been detected on this USB.\n");
-	Print(L"    Press the key corresponding to the number of the option that you want.\n\n");
-	uefi_call_wrapper(ST->ConIn->Reset, 2, ST->ConIn, FALSE);
-	uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE); // Disable display of the cursor.
-	
-	// Print out the available Linux distributions on this USB.
-	BootableLinuxDistro *conductor = root->next; // The first item is blank. I'll fix this later.
-	int iteratorIndex = 0;
-	while ( conductor != NULL ) {
-		if (conductor->bootOption->name) {
-			Print(L"    %d - %a\n", (iteratorIndex + 1), conductor->bootOption->name);
-		}
-		
-		conductor = conductor->next;
-		
-		iteratorIndex++;
+	// We need to move forward to the proper distribution struct.
+	BootableLinuxDistro *conductor = root->next;
+	int i; for (i = 0; i < distribution && conductor != NULL; i++, conductor = conductor->next);
+	LinuxBootOption *boot_params = conductor->bootOption;
+	if (!boot_params) {
+		DisplayErrorText(L"Error: couldn't get Linux distribution boot settings.\n");
+		return EFI_LOAD_ERROR;
 	}
-	Print(L"\n    Press any other key to reboot the system.\n");
 	
-	// Get the key press.
-	UINT64 key;
-	err = key_read(&key, TRUE);
-	int index = key - '0';
-	Print(L"You selected option %d.\n", index);
-	
-	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
-	/*CHAR8 *kernel_path = boot_params->kernel_path;
+	CHAR8 *kernel_path = boot_params->kernel_path;
 	CHAR8 *initrd_path = boot_params->initrd_path;
 	CHAR8 *boot_folder = boot_params->boot_folder;
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxKernelPath", kernel_path,
@@ -172,13 +150,9 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params) {
 	efi_set_variable(&grub_variable_guid, L"Enterprise_InitRDPath", initrd_path,
 		sizeof(initrd_path[0]) * strlena(initrd_path) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_BootFolder", boot_folder,
-		sizeof(boot_folder[0]) * strlena(boot_folder) + 1, FALSE);*/
-	
-	FreePool(conductor);
-	FreePool(root); // Free the now-unneeded memory.
+		sizeof(boot_folder[0]) * strlena(boot_folder) + 1, FALSE);
 	
 	// Load the EFI boot loader image into memory.
-	uefi_call_wrapper(BS->Stall, 1, 5 * 1000 * 1000);
 	path = FileDevicePath(this_image->DeviceHandle, L"\\efi\\boot\\boot.efi");
 	err = uefi_call_wrapper(BS->LoadImage, 6, FALSE, global_image, path, NULL, 0, &image);
 	if (EFI_ERROR(err)) {

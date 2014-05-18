@@ -161,6 +161,42 @@ EFI_STATUS key_read(UINT64 *key, BOOLEAN wait) {
 	return EFI_SUCCESS;
 }
 
+EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 *bootOptions) {
+	EFI_STATUS err = EFI_SUCCESS;
+	
+	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.
+	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut); // Clear the screen.
+	Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH); // Print the welcome information.
+	Print(L"\nBoot Selector:\n");
+	Print(L"    The following distributions have been detected on this USB.\n");
+	Print(L"    Press the key corresponding to the number of the option that you want.\n\n");
+	uefi_call_wrapper(ST->ConIn->Reset, 2, ST->ConIn, FALSE);
+	uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE); // Disable display of the cursor.
+	
+	// Print out the available Linux distributions on this USB.
+	BootableLinuxDistro *conductor = root->next; // The first item is blank. I'll fix this later.
+	int iteratorIndex = 0;
+	while ( conductor != NULL ) {
+		if (conductor->bootOption->name) {
+			Print(L"    %d - %a\n", (iteratorIndex + 1), conductor->bootOption->name);
+		}
+		
+		conductor = conductor->next;
+		
+		iteratorIndex++;
+	}
+	Print(L"\n    Press any other key to reboot the system.\n");
+	
+	// Get the key press.
+	UINT64 key;
+	err = key_read(&key, TRUE);
+	int index = key - '0';
+	Print(L"You selected option %d.\n", index);
+	
+	err = BootLinuxWithOptions(bootOptions, index);
+	return err; // Shouldn't get here.
+}
+
 EFI_STATUS DisplayMenu(void) {
 	EFI_STATUS err;
 	UINT64 key;
@@ -177,7 +213,7 @@ EFI_STATUS DisplayMenu(void) {
 	
 	err = key_read(&key, TRUE);
 	if (key == '1') {
-		BootLinuxWithOptions(L"");
+		DisplayDistributionSelector(GetDistributionListRoot(), L"");
 	} else if (key == '2') {
 		ConfigureKernel(boot_options, preset_options_array, PRESET_OPTIONS_SIZE);
 	} else {
@@ -279,7 +315,7 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		StrCat(options, L"gpt ");
 	}
 	
-	BootLinuxWithOptions(options);
+	DisplayDistributionSelector(GetDistributionListRoot(), options);
 	
 	// Shouldn't get here unless something went wrong with the boot process.
 	uefi_call_wrapper(BS->Stall, 1, 3 * 1000);

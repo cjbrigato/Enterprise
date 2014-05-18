@@ -20,6 +20,11 @@
 #ifndef _main_h
 #define _main_h
 
+#define banner L"Welcome to Enterprise! - Version %d.%d.%d\n"
+#define VERSION_MAJOR 0
+#define VERSION_MINOR 2
+#define VERSION_PATCH 1
+
 typedef struct LinuxBootOption {
 	CHAR8 *name;
 	CHAR8 *file_name;
@@ -34,6 +39,7 @@ typedef struct BootableLinuxDistro {
 	struct BootableLinuxDistro *next;
 } BootableLinuxDistro;
 
-EFI_STATUS BootLinuxWithOptions(CHAR16 *params);
+EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution);
+BootableLinuxDistro* GetDistributionListRoot();
 
 #endif
