@@ -21,6 +21,7 @@
 	<link rel="stylesheet" href="stylesheets/base.css">
 	<link rel="stylesheet" href="stylesheets/skeleton.css">
 	<link rel="stylesheet" href="stylesheets/layout.css">
+    <link rel="stylesheet" href="stylesheets/table.css">
 
 	<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -61,6 +62,7 @@
             
             <p><strong>Unstable:</strong></p>
             <p><a href="javascript:void(0);">Version 0.1.1</a> (19 December 2013)</p>
+            <p><a href="https://github.com/SevenBits/Enterprise/archive/master.zip" target="_blank">Current Source on Git</a></p>
             
             <p>Please note that obtaining Enterprise in this fashion means doing lots of setup work. If you simply want to create a bootable USB, please consider using <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac Linux USB Loader</a>, which sets up Enterprise for you.</p>
 		</div>
@@ -81,19 +83,67 @@
             <h4>The Basics</h4>
             
             <p>Once upon a time, everything was happy in computer-land. Our PCs were booting, our memory sufficed, and the children were happy. But then Mr. Turing had to curse us with the &lt;sarcasm&gt; evil of technological progress &lt;&frasl;sarcasm&gt;, and eventually our nice, peaceful solutions didn't work anymore. All of a sudden, our multi&#45;terabyte drives couldn't be booted from, and our old 16&#45;bit BIOSes couldn't boot our cool, newfangled 64&#45;bit multicore operating systems. Woe was us!</p>
-            <p>But our computer engineers, clever as they are, dug up an old, largely forgotten future&#45;proof boot specification, UEFI. </p>
+            <p>But our computer engineers, clever as they are, dug up an old, largely forgotten future&#45;proof boot specification, UEFI. And from there, the rest is history.</p>
 
             <h4>Installation and Use</h4>
 
             <p>Enterprise is intended as a tool to be used alongside Mac Linux USB Loader, and so it is not really intended to be installed in the same manner as one would install a traditional bootloader like GRUB. That being said, it is possible to use Enterprise without Mac Linux USB Loader, as they are wholly separate tools, however in this circumstance additional setup is required.</p>
             <p>To get the best performance from Enterprise, and to take advantage of any super cool stuff I add to it, you should download the source code, as the official repository includes a number of tools to assist in setup.</p>
+            <p>You should begin by downloading the Enterprise binaries. You can do that at the pane to the left. Then you need to set up a configuration file named <em>.MLUL&#45;Live&#45;USB</em> that tells Enterprise details about the distribution that you want to boot from your USB drive. Here's a sample file:</p>
+            
+            <p>
+                <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+                    <pre style="margin: 0; line-height: 125%">
+# Lines beginning with a pound sign are comments. They are ignored during parsing.
+family Ubuntu
+kernel /casper/vmlinuz.efi</pre>
+                </div>
+            </p>
+            
+            <p>At the very minimum, you need <em>at least</em> the <code>family</code> parameter. This tells Enterprise which distribution you are trying to boot and loads default options based on this. All of these default options can be overwritten. The default options for each parameter are:</p>
+            <p>
+                <table cellspacing='0'>
+                    <thead>
+                        <tr>
+                            <th>Distribution</th>
+                            <th>Default Values</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <tr>
+                            <td>Ubuntu</td>
+                            <td> <strong>kernel: </strong>/casper/vmlinuz <strong>initrd: </strong>/casper/initrd.lz </td>
+                        </tr>
+                        <tr>
+                            <td>Debian</td>
+                            <td> <strong>kernel: </strong>/live/vmlinuz <strong>initrd: </strong>/live/initrd.img </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </p>
+        
+            <p>Have questions or comments? Feel free to <a href="http://sevenbits.github.io/contact.html">contact me</a> with any requests, etc.</p>
+        
+            <h4>Contributions</h4>
+        
+            <p>For those of you in the know, I code using a style called <a href="https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS" target="_blank">1TBS</a> - or, the one true brace style. I quite like it. So much so, in fact, that it's the required syntax style (just so things don't get messy). For those of you who are not familiar with it, it is best demonstrated with an example:</p>
+            <p>
+                <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">if</span> (<span style="color: #007020">true</span>) {
+    bob();
+} <span style="color: #008800; font-weight: bold">else</span> {
+    sam();
+}
+</pre></div>
+            </p>
+            <p>That should suffice for an explanation. Looking forward to seeing how everyone uses this!</p>
 		</div>
         </div> <!-- end row -->
         
         <div class="row">
             <div class="three.columns offset-by-thirteen">
                 <small>Proudly made in America!</small>
-                <img src="images/united_states_of_america.png" alt="The USA flag" style="vertical-align:text-bottom;"/>
+                <img src="images/united_states_of_america.png" alt="The USA flag"/>
             </div>
         </div> <!-- end row -->
 
