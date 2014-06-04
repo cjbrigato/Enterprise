@@ -54,7 +54,7 @@ def main():
 def verifyConfigurationFile(file):
 	"""Verify whether Enterprise's configuration file
 		is valid."""
-	validKeys = ["family", "kernel", "initrd", "root"]
+	validKeys = ["entry", "family", "kernel", "initrd", "root"]
 	verifyIsValid = True
 	if not (fileExists(file)):
 		return "bad: the file does not exist"
