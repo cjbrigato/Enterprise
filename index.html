@@ -94,14 +94,15 @@
             <p>To get the best performance from Enterprise, and to take advantage of any super cool stuff I add to it, you should download the source code, as the official repository includes a number of tools to assist in setup.</p>
             <p>However, for beginners and casual users, you should begin by downloading the Enterprise binaries. You can do that at the pane to the left. Then you need to set up a configuration file on your USB drive named <em>.MLUL&#45;Live&#45;USB</em> that tells Enterprise details about the distribution that you want to boot from your USB drive. Here's a sample file:</p>
             
-            <p>
+            <!--<p>
                 <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
                     <pre style="margin: 0; line-height: 125%">
 # Lines beginning with a pound sign are comments. They are ignored during parsing.
 family Ubuntu
 kernel /casper/vmlinuz.efi</pre>
                 </div>
-            </p>
+            </p>-->
+            <script src="https://gist.github.com/SevenBits/466f078ac3dfbd028a4b.js"></script>
             
             <p>At the very minimum, you need <em>at least</em> the <code>family</code> parameter. This tells Enterprise which distribution you are trying to boot and loads default options based on this. All of these default options can be overwritten. The default options for each parameter are:</p>
             <p>
