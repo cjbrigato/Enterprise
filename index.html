@@ -126,7 +126,43 @@ kernel /casper/vmlinuz.efi</pre>
                     </tbody>
                 </table>
             </p>
-        
+            
+            <p>Naturally, the <code>kernel</code> and <code>initrd</code> parameters can be altered by adding the respective line to the <em>.MLUL&#45;Live&#45;USB</em> file. This is demonstrated above with the <code>kernel</code> parameter. You can pass a variety of additional options, including&#58;</p>
+            
+            <p>
+                <table cellspacing='0'>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Effect</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <tr>
+                            <td>entry</td>
+                            <td><strong>Coming in a future version of Enterprise.</strong></td>
+                        </tr>
+                        <tr>
+                            <td>family</td>
+                            <td>Specifies the distribution family (e.g Ubuntu, Debian, etc) and sets the remaining options accordingly.</td>
+                        </tr>
+                        <tr>
+                            <td>kernel</td>
+                            <td>Specifies, relative to the root of the ISO, like absolute path to the Linux kernel.</td>
+                        </tr>
+                        <tr>
+                            <td>initrd</td>
+                            <td>Specifies, relative to the root of the ISO, like absolute path to the Linux initial RAM disc.</td>
+                        </tr>
+                        <tr>
+                            <td>root</td>
+                            <td>Specifies the location of the kernel and initrd. Passed to the Linux kernel as <code>boot=XXX</code>, where XXX is the value of this parameter.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </p>
+            
             <p>Have questions or comments? Feel free to <a href="http://sevenbits.github.io/contact.html">contact me</a> with any requests, etc.</p>
         
             <h4>Contributions</h4>
