@@ -25,8 +25,8 @@
 #include "utils.h"
 #include "distribution.h"
 
-static const EFI_GUID enterprise_variable_guid = {0x4a67b082, 0x0a4c, 0x41cf, {0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f}};
-static const EFI_GUID grub_variable_guid = {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B,0x8C}};
+const EFI_GUID enterprise_variable_guid = {0x4a67b082, 0x0a4c, 0x41cf, {0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f}};
+const EFI_GUID grub_variable_guid = {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B,0x8C}};
 
 static void ReadConfigurationFile(const CHAR16 *name);
 static EFI_STATUS console_text_mode(VOID);
@@ -118,10 +118,6 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	}
 	
 	return EFI_SUCCESS;
-}
-
-BootableLinuxDistro* GetDistributionListRoot() {
-	return root;
 }
 
 EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {

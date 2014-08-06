@@ -213,7 +213,7 @@ EFI_STATUS DisplayMenu(void) {
 	
 	err = key_read(&key, TRUE);
 	if (key == '1') {
-		DisplayDistributionSelector(GetDistributionListRoot(), L"");
+		DisplayDistributionSelector(distributionListRoot, L"");
 	} else if (key == '2') {
 		ConfigureKernel(boot_options, preset_options_array, PRESET_OPTIONS_SIZE);
 	} else {
@@ -316,7 +316,7 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		StrCat(options, L"gpt ");
 	}
 	
-	DisplayDistributionSelector(GetDistributionListRoot(), options);
+	DisplayDistributionSelector(distributionListRoot, options);
 	
 	// Shouldn't get here unless something went wrong with the boot process.
 	uefi_call_wrapper(BS->Stall, 1, 3 * 1000);

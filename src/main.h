@@ -40,6 +40,10 @@ typedef struct BootableLinuxDistro {
 } BootableLinuxDistro;
 
 EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution);
-BootableLinuxDistro* GetDistributionListRoot();
+
+extern const EFI_GUID enterprise_variable_guid;
+extern const EFI_GUID grub_variable_guid;
+
+extern BootableLinuxDistro *distributionListRoot;
 
 #endif
