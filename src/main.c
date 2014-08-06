@@ -29,7 +29,10 @@ const EFI_GUID enterprise_variable_guid = {0x4a67b082, 0x0a4c, 0x41cf, {0xb6, 0x
 const EFI_GUID grub_variable_guid = {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B,0x8C}};
 
 static void ReadConfigurationFile(const CHAR16 *name);
+
 static EFI_STATUS console_text_mode(VOID);
+static EFI_STATUS SetupDisplay(VOID);
+UINTN numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable = 0;
 
 static EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;
@@ -46,6 +49,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	console_text_mode(); // Put the console into text mode. If we don't do that, the image of the Apple
 						// boot manager will remain on the screen and the user won't see any output
 						// from the program.
+	SetupDisplay();
 	global_image = image_handle;
 	
 	err = uefi_call_wrapper(BS->HandleProtocol, 3, image_handle, &LoadedImageProtocol, (void *)&this_image);
@@ -118,6 +122,22 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	}
 	
 	return EFI_SUCCESS;
+}
+
+static EFI_STATUS SetupDisplay(VOID) {
+	// Set the display to use the highest available resolution.
+	EFI_STATUS err;
+	
+	do {
+		err = uefi_call_wrapper(ST->ConOut->QueryMode, 4, ST->ConOut, highestModeNumberAvailable, &numberOfDisplayRows, &numberOfDisplayColoumns);
+		Print(L"Detected mode %d: %d x %d.\n", highestModeNumberAvailable, numberOfDisplayRows, numberOfDisplayColoumns);
+		
+		highestModeNumberAvailable++;
+	} while (err == EFI_SUCCESS);
+	
+	Print(L"Setting display to be in mode %d.\n", highestModeNumberAvailable - 1);
+	err = uefi_call_wrapper(ST->ConOut->SetMode, 2, ST->ConOut, highestModeNumberAvailable - 1);
+	return err;
 }
 
 EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {

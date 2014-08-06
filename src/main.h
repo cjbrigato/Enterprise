@@ -44,6 +44,8 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution);
 extern const EFI_GUID enterprise_variable_guid;
 extern const EFI_GUID grub_variable_guid;
 
+extern UINTN numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable;
+
 extern BootableLinuxDistro *distributionListRoot;
 
 #endif
