@@ -29,10 +29,10 @@ def main():
 
 	configIsValid = verifyConfigurationFile("efi/boot/.MLUL-Live-USB")
 	## Check if the Enterprise files are present.
-	if ( not fileExists("efi/boot/boot.efi") and
+	if ( not fileExists("efi/boot/boot.efi") or
 		 not fileExists("efi/boot/bootX64.efi")
 		):
-		reason = "The EFI boot files are not present."
+		reason = "One or more of the EFI boot files are not present."
 		installValid = False
 	elif (not fileExists("efi/boot/.MLUL-Live-USB")):
 		reason = "No Enterprise configuration file present."
@@ -54,7 +54,7 @@ def main():
 def verifyConfigurationFile(file):
 	"""Verify whether Enterprise's configuration file
 		is valid."""
-	validKeys = ["family", "kernel", "initrd", "root"]
+	validKeys = ["entry", "family", "kernel", "initrd", "root"]
 	verifyIsValid = True
 	if not (fileExists(file)):
 		return "bad: the file does not exist"
