@@ -116,7 +116,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	if (can_continue) {
 		DisplayMenu();
 	} else {
-		Print(L"Cannot continue because core files are missing or damaged.\nRestarting...\n");
+		DisplayErrorText(L"Cannot continue because core files are missing or damaged.\nRestarting...\n");
 		uefi_call_wrapper(BS->Stall, 1, 1000 * 1000);
 		return EFI_LOAD_ERROR;
 	}
@@ -238,7 +238,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			// unsupported distribution or a typo of the distribution name.
 			if (strcmpa((CHAR8 *)"", conductor->bootOption->kernel_path) == 0 ||
 				strcmpa((CHAR8 *)"", conductor->bootOption->initrd_path) == 0) {
-				Print(L"Distribution family %s is not supported.\n", ASCIItoUTF16(value, strlena(value)));
+				Print(L"Distribution family %a is not supported.\n", value);
 				
 				FreePool(conductor->bootOption);
 				root = 0;
@@ -252,7 +252,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
 			conductor->bootOption->boot_folder = value;
 		} else {
-			Print(L"Unrecognized configuration option: %s.\n", ASCIItoUTF16(key, strlena(key)));
+			Print(L"Unrecognized configuration option: %a.\n", key);
 		}
 	}
 	
