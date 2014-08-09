@@ -268,8 +268,8 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		OPTION(L"\n    5) persistent - Make any changes to the flash storage persist.", 4);
 		OPTION(L"\n    6) toram - Keep the entire distribution in RAM to minimize disk usage.", 5);
 		OPTION(L"\n    7) debug - Enable kernel debugging.", 6);
-		OPTION(L"\n    9) gpt - Forces disk with valid GPT signature but invalid Protective MBR" \
-				" to be treated as GPT (useful for installing Linux on a Mac drive).", 8);
+		OPTION(L"\n    8) gpt - Forces disk with valid GPT signature but invalid Protective MBR" \
+				" to be treated as GPT (useful for installing Linux on a Mac drive).", 7);
 		Print(L"\n\n    0) Boot with selected options.\n");
 		
 		err = key_read(&key, TRUE);
@@ -312,7 +312,7 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		StrCat(options, L"debug ");
 	}
 	
-	if (options_array[8]) {
+	if (options_array[7]) {
 		StrCat(options, L"gpt ");
 	}
 	
