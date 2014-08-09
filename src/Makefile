@@ -28,7 +28,7 @@ EFI_CRT_OBJS    = $(EFILIB)/crt0-efi-$(ARCH).o
 EFI_LDS         = $(EFILIB)/elf_$(ARCH)_efi.lds
 
 CFLAGS          = $(EFIINCS) -fno-stack-protector -std=c99 -fpic \
-		  		-fshort-wchar -mno-red-zone -Wall 
+		  		-fshort-wchar -mno-red-zone -Wall -Wextra
 ifeq ($(ARCH),x86_64)
   CFLAGS += -DEFI_FUNCTION_WRAPPER
 endif

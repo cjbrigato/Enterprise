@@ -36,6 +36,4 @@ CHAR8* GetConfigurationKeyAndValue(CHAR8 *content, UINTN *pos, CHAR8 **key_ret, 
 VOID DisplayColoredText(CHAR16 *string);
 VOID DisplayErrorText(CHAR16 *string);
 
-VOID SetupLinuxBootOption(LinuxBootOption *);
-
 #endif

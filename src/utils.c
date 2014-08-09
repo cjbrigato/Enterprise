@@ -311,15 +311,3 @@ skip:
 	*value_ret = value;
 	return line;
 }
-
-#ifdef __APPLE__
-	#pragma mark - Utility functions to allocate memory.
-#endif
-VOID SetupLinuxBootOption(LinuxBootOption *lbo) {
-	lbo->name = (CHAR8 *)AllocateZeroPool(100);
-	lbo->file_name = (CHAR8 *)AllocateZeroPool(100);
-	lbo->distro_family = (CHAR8 *)AllocateZeroPool(100);
-	lbo->kernel_path = (CHAR8 *)AllocateZeroPool(100);
-	lbo->initrd_path = (CHAR8 *)AllocateZeroPool(100);
-	lbo->boot_folder = (CHAR8 *)AllocateZeroPool(100);
-}

@@ -38,7 +38,7 @@ static EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;
 
 static EFI_HANDLE global_image;
-BootableLinuxDistro *root;
+BootableLinuxDistro *distributionListRoot;
 
 /* entry function for EFI */
 EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
@@ -61,7 +61,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	
 	root_dir = LibOpenRoot(this_image->DeviceHandle);
 	if (!root_dir) {
-		Print(L"Unable to open root directory.\n");
+		DisplayErrorText(L"Unable to open root directory.\n");
 		uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 		return EFI_LOAD_ERROR;
 	}
@@ -87,7 +87,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 		can_continue = FALSE;
 	} else {
 		ReadConfigurationFile(L"\\efi\\boot\\.MLUL-Live-USB");
-		if (!root) {
+		if (!distributionListRoot) {
 			DisplayErrorText(L"Error: configuration file parsing error.\n");
 			can_continue = FALSE;
 		}
@@ -148,9 +148,10 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 	CHAR8 *sized_str = UTF16toASCII(params, StrLen(params) + 1);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", sized_str,
 		sizeof(sized_str[0]) * strlena(sized_str) + 1, FALSE);
-		
+	
 	// We need to move forward to the proper distribution struct.
-	BootableLinuxDistro *conductor = root->next;
+	BootableLinuxDistro *conductor = distributionListRoot->next;
+	
 	int i; for (i = 0; i < distribution && conductor != NULL; i++, conductor = conductor->next);
 	LinuxBootOption *boot_params = conductor->bootOption;
 	if (!boot_params) {
@@ -161,6 +162,7 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 	CHAR8 *kernel_path = boot_params->kernel_path;
 	CHAR8 *initrd_path = boot_params->initrd_path;
 	CHAR8 *boot_folder = boot_params->boot_folder;
+	
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxKernelPath", kernel_path,
 		sizeof(kernel_path[0]) * strlena(kernel_path) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_InitRDPath", initrd_path,
@@ -185,6 +187,7 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 	err = uefi_call_wrapper(BS->StartImage, 3, image, NULL, NULL);
 	if (EFI_ERROR(err)) {
 		DisplayErrorText(L"Error starting image: ");
+		
 		Print(L"%r\n", err);
 		uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 		FreePool(path);
@@ -192,15 +195,17 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 		return EFI_LOAD_ERROR;
 	}
 	
+	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
+	// Should never return.
 	return EFI_SUCCESS;
 }
 
 static void ReadConfigurationFile(const CHAR16 *name) {
 	/* This will always stay consistent, otherwise we'll lose the list in memory.*/
-	root = AllocateZeroPool(sizeof(BootableLinuxDistro));
+	distributionListRoot = AllocateZeroPool(sizeof(BootableLinuxDistro));
 	BootableLinuxDistro *conductor; // Will point to each node as we traverse the list.
 	
-	conductor = root; // Start by pointing at the first element.
+	conductor = distributionListRoot; // Start by pointing at the first element.
 	
 	CHAR8 *contents;
 	UINTN read_bytes = FileRead(root_dir, name, &contents);
@@ -219,8 +224,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 		if (strcmpa((CHAR8 *)"entry", key) == 0) {
 			BootableLinuxDistro *new = AllocateZeroPool(sizeof(BootableLinuxDistro));
 			new->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
-			SetupLinuxBootOption(new->bootOption);
-			strcpya(new->bootOption->name, value);
+			AllocateMemoryAndCopyChar8String(new->bootOption->name, value);
 				
 			conductor->next = new;
 			new->next = NULL;
@@ -228,11 +232,11 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 		}
 		// The user has given us a distribution family.
 		else if (strcmpa((CHAR8 *)"family", key) == 0) {
-			distribution = value;
-			conductor->bootOption->distro_family = value;
-			conductor->bootOption->kernel_path = KernelLocationForDistributionName(distribution, &boot_folder);
-			conductor->bootOption->initrd_path = InitRDLocationForDistributionName(distribution);
-			conductor->bootOption->boot_folder = boot_folder;
+			AllocateMemoryAndCopyChar8String(distribution, value);
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->distro_family, value);
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_path, KernelLocationForDistributionName(distribution, &boot_folder));
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->initrd_path, InitRDLocationForDistributionName(distribution));
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->boot_folder, boot_folder);
 			//Print(L"Boot folder: %s\n", ASCIItoUTF16(boot_folder, strlena(boot_folder)));
 			// If either of the paths are a blank string, then you've got an
 			// unsupported distribution or a typo of the distribution name.
@@ -241,22 +245,22 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 				Print(L"Distribution family %a is not supported.\n", value);
 				
 				FreePool(conductor->bootOption);
-				root = 0;
+				distributionListRoot = NULL;
 				return;
 			}
 		// The user is manually specifying information; override any previous values.
 		} else if (strcmpa((CHAR8 *)"kernel", key) == 0) {
-			conductor->bootOption->kernel_path = value;
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_path, value);
 		} else if (strcmpa((CHAR8 *)"initrd", key) == 0) {
-			conductor->bootOption->initrd_path = value;
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->initrd_path, value);
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
-			conductor->bootOption->boot_folder = value;
+			AllocateMemoryAndCopyChar8String(conductor->bootOption->boot_folder, value);
 		} else {
 			Print(L"Unrecognized configuration option: %a.\n", key);
 		}
 	}
 	
-	Print(L"Done reading configuration file.\n");
+	//Print(L"Done reading configuration file.\n");
 }
 
 static EFI_STATUS console_text_mode(VOID) {

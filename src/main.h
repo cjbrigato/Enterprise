@@ -25,6 +25,11 @@
 #define VERSION_MINOR 2
 #define VERSION_PATCH 1
 
+#define AllocateMemoryAndCopyChar8String(dest, src) \
+	if (dest) FreePool(dest); dest = NULL; \
+	dest = AllocatePool(sizeof(CHAR8) * strlena(src)); \
+	strcpya(dest, src); \
+
 typedef struct LinuxBootOption {
 	CHAR8 *name;
 	CHAR8 *file_name;

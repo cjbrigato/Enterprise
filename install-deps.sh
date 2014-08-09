@@ -19,7 +19,7 @@
 set -e
 mkdir build-deps 2> /dev/null >> /dev/null
 cd build-deps
-wget -q http://downloads.sourceforge.net/project/gnu-efi/gnu-efi_3.0u.orig.tar.gz
+wget -q http://downloads.sourceforge.net/project/gnu-efi/gnu-efi_3.0v.orig.tar.gz
 tar -zxvf gnu-efi_3.0u.orig.tar.gz >> /dev/null
 
 cd gnu-efi-3.0
