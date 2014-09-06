@@ -250,7 +250,24 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			}
 		// The user is manually specifying information; override any previous values.
 		} else if (strcmpa((CHAR8 *)"kernel", key) == 0) {
-			AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_path, value);
+			if (strposa(value, ' ') != -1) {
+				// There's a space after the kernel name; the user has given us additional kernel parameters.
+				// Separate the kernel path and options and copy them into their respective positions in the
+				// boot options struct.
+				INTN spaceCharPos = strposa(value, ' ');
+				if (conductor->bootOption->kernel_path) FreePool(conductor->bootOption->kernel_path);
+				conductor->bootOption->kernel_path = NULL;
+				
+				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos);
+				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos);
+				Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
+				
+				CHAR8 *params = value + spaceCharPos + 1;
+				AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_options, params);
+				Print(L"conductor->bootOption->kernel_options = %a\n", conductor->bootOption->kernel_options);
+			} else {
+				AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_path, value);
+			}
 		} else if (strcmpa((CHAR8 *)"initrd", key) == 0) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->initrd_path, value);
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {

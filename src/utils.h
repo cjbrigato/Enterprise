@@ -25,9 +25,10 @@ EFI_STATUS efi_set_variable(const EFI_GUID *, CHAR16 *, CHAR8 *, UINTN, BOOLEAN)
 EFI_STATUS efi_delete_variable(const EFI_GUID *, CHAR16 *);
 EFI_STATUS efi_get_variable(const EFI_GUID *, CHAR16 *, CHAR8 **, UINTN *);
 
-CHAR8* strcpya(CHAR8 *target, const CHAR8 *);
+CHAR8* strcpya(CHAR8 *, const CHAR8 *);
 CHAR8* strchra(const CHAR8 *, int);
-UINTN strposa(const CHAR8 *, char);
+CHAR8* strncpya(CHAR8 *, const CHAR8 *, INTN);
+INTN strposa(const CHAR8 *, char);
 
 INTN NarrowToLongCharConvert(CHAR8 *InChar, OUT CHAR16 *);
 CHAR16* ASCIItoUTF16(CHAR8 *, UINTN);

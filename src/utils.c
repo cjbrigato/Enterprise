@@ -95,6 +95,20 @@ CHAR8* strcpya(CHAR8 *target, const CHAR8 *source) {
 	return target;
 }
 
+CHAR8* strncpya(CHAR8 *target, const CHAR8 *source, INTN n) {
+	CHAR8 *dst = target;
+	const CHAR8 *src = source;
+	while (n > 0) {
+		n--;
+		if ((*dst++ = *src++) == '\0') {
+			SetMem(dst, n, '\0');
+			break;
+		}
+	}
+	
+	return target;
+}
+
 CHAR8* strchra(const CHAR8 *s, int c) {
 	while (*s != (char)c) {
 		if (!*s++) {
@@ -105,7 +119,7 @@ CHAR8* strchra(const CHAR8 *s, int c) {
 	return (CHAR8 *)s;
 }
 
-UINTN strposa(const CHAR8 *str, char c) {
+INTN strposa(const CHAR8 *str, char c) {
 	CHAR8 *p = strchra(str, c);
 	return p ? p - str : -1;
 }
