@@ -175,14 +175,13 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 	
 	// Print out the available Linux distributions on this USB.
 	BootableLinuxDistro *conductor = root->next; // The first item is blank. I'll fix this later.
-	int iteratorIndex = 0;
-	while ( conductor != NULL ) {
+	INTN iteratorIndex = 0;
+	while (conductor != NULL) {
 		if (conductor->bootOption->name) {
 			Print(L"    %d) %a\n", (iteratorIndex + 1), conductor->bootOption->name);
 		}
 		
 		conductor = conductor->next;
-		
 		iteratorIndex++;
 	}
 	Print(L"\n    Press any other key to reboot the system.\n");
@@ -190,8 +189,18 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 	// Get the key press.
 	UINT64 key;
 	err = key_read(&key, TRUE);
-	int index = key - '0';
-	Print(L"You selected option %d.\n", index);
+	INTN index = key - '0';
+	
+	if (index > iteratorIndex) {
+		// Reboot the system.
+		err = uefi_call_wrapper(RT->ResetSystem, 4, EfiResetCold, EFI_SUCCESS, 0, NULL);
+		
+		// Should never get here unless there's an error.
+		Print(L"Error calling ResetSystem: %r", err);
+		uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
+	} else {
+		Print(L"You selected option %d.\n", index);
+	}
 	
 	err = BootLinuxWithOptions(bootOptions, index);
 	return err; // Shouldn't get here.
