@@ -21,19 +21,19 @@
 #define _utils_h
 #include "main.h"
 
-EFI_STATUS efi_set_variable(const EFI_GUID *vendor, CHAR16 *name, CHAR8 *buf, UINTN size, BOOLEAN persistent);
-EFI_STATUS efi_delete_variable(const EFI_GUID *vendor, CHAR16 *name);
-EFI_STATUS efi_get_variable(const EFI_GUID *vendor, CHAR16 *name, CHAR8 **buffer, UINTN *size);
+EFI_STATUS efi_set_variable(const EFI_GUID *, CHAR16 *, CHAR8 *, UINTN, BOOLEAN);
+EFI_STATUS efi_delete_variable(const EFI_GUID *, CHAR16 *);
+EFI_STATUS efi_get_variable(const EFI_GUID *, CHAR16 *, CHAR8 **, UINTN *);
 
-CHAR8* strcpya(CHAR8 *target, const CHAR8 *source);
-INTN NarrowToLongCharConvert(CHAR8 *InChar, OUT CHAR16 *OutChar);
-CHAR16* ASCIItoUTF16(CHAR8 *InString, UINTN InLength);
-CHAR8* UTF16toASCII(CHAR16 *InString, UINTN InLength);
+CHAR8* strcpya(CHAR8 *target, const CHAR8 *);
+INTN NarrowToLongCharConvert(CHAR8 *InChar, OUT CHAR16 *);
+CHAR16* ASCIItoUTF16(CHAR8 *, UINTN);
+CHAR8* UTF16toASCII(CHAR16 *, UINTN);
 
-BOOLEAN FileExists(EFI_FILE_HANDLE dir, CHAR16 *name);
-UINTN FileRead(EFI_FILE_HANDLE dir, const CHAR16 *name, CHAR8 **content);
-CHAR8* GetConfigurationKeyAndValue(CHAR8 *content, UINTN *pos, CHAR8 **key_ret, CHAR8 **value_ret);
-VOID DisplayColoredText(CHAR16 *string);
-VOID DisplayErrorText(CHAR16 *string);
+BOOLEAN FileExists(EFI_FILE_HANDLE, CHAR16 *);
+UINTN FileRead(EFI_FILE_HANDLE, const CHAR16 *, CHAR8 **);
+CHAR8* GetConfigurationKeyAndValue(CHAR8 *, UINTN *, CHAR8 **, CHAR8 **);
+VOID DisplayColoredText(CHAR16 *);
+VOID DisplayErrorText(CHAR16 *);
 
 #endif

@@ -25,7 +25,7 @@
 #define PRESET_OPTIONS_SIZE 20
 extern bool preset_options_array[PRESET_OPTIONS_SIZE];
 
-CHAR8* KernelLocationForDistributionName(CHAR8 *name, OUT CHAR8 **boot_folder);
-CHAR8* InitRDLocationForDistributionName(CHAR8 *name);
+CHAR8* KernelLocationForDistributionName(CHAR8 *, OUT CHAR8 **);
+CHAR8* InitRDLocationForDistributionName(CHAR8 *);
 
 #endif

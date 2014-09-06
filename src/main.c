@@ -37,7 +37,7 @@ UINTN numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable =
 static EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;
 
-static EFI_HANDLE global_image;
+static EFI_HANDLE global_image = NULL; // EFI_HANDLE is a typedef to a VOID pointer.
 BootableLinuxDistro *distributionListRoot;
 
 /* entry function for EFI */
@@ -172,7 +172,7 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 	
 	// Load the EFI boot loader image into memory.
 	path = FileDevicePath(this_image->DeviceHandle, L"\\efi\\boot\\boot.efi");
-	err = uefi_call_wrapper(BS->LoadImage, 6, FALSE, global_image, path, NULL, 0, &image);
+	err = uefi_call_wrapper(BS->LoadImage, 6, TRUE, global_image, path, NULL, 0, &image);
 	if (EFI_ERROR(err)) {
 		DisplayErrorText(L"Error loading image: ");
 		Print(L"%r\n", err);

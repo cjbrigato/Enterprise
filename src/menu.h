@@ -25,6 +25,6 @@ EFI_STATUS key_read(UINT64 *key, BOOLEAN wait);
 
 EFI_STATUS DisplayMenu(void);
 EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *, CHAR16 *);
-EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_options_length);
+EFI_STATUS ConfigureKernel(CHAR16 *, bool[], int);
 
 #endif
