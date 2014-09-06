@@ -28,7 +28,7 @@
 const EFI_GUID enterprise_variable_guid = {0x4a67b082, 0x0a4c, 0x41cf, {0xb6, 0xc7, 0x44, 0x0b, 0x29, 0xbb, 0x8c, 0x4f}};
 const EFI_GUID grub_variable_guid = {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B,0x8C}};
 
-static void ReadConfigurationFile(const CHAR16 *name);
+static void ReadConfigurationFile(const CHAR16 *);
 
 static EFI_STATUS console_text_mode(VOID);
 static EFI_STATUS SetupDisplay(VOID);

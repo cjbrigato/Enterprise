@@ -21,8 +21,6 @@
 
 #include "utils.h"
 
-static CHAR8* strchra(CHAR8 *s, CHAR8 c);
-
 #ifdef __APPLE__
 	#pragma mark - Get/Set/Delete EFI variables
 #endif
@@ -95,6 +93,21 @@ CHAR8* strcpya(CHAR8 *target, const CHAR8 *source) {
 	target[i] = source[i];
 
 	return target;
+}
+
+CHAR8* strchra(const CHAR8 *s, int c) {
+	while (*s != (char)c) {
+		if (!*s++) {
+			return NULL;
+		}
+	}
+	
+	return (CHAR8 *)s;
+}
+
+UINTN strposa(const CHAR8 *str, char c) {
+	CHAR8 *p = strchra(str, c);
+	return p ? p - str : -1;
 }
 
 CHAR8* UTF16toASCII(CHAR16 *InString, UINTN InLength) {
@@ -237,15 +250,6 @@ out:
 }
 
 // This code has been adapted from gummiboot. Thanks, guys!
-static CHAR8 *strchra(CHAR8 *s, CHAR8 c) {
-	do {
-		if (*s == c) {
-			return s;
-		}
-	} while (*s++);
-	return NULL;
-}
-
 CHAR8* GetConfigurationKeyAndValue(CHAR8 *content, UINTN *pos, CHAR8 **key_ret, CHAR8 **value_ret) {
 	CHAR8 *line;
 	UINTN linelen;
