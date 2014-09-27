@@ -109,6 +109,17 @@ CHAR8* strncpya(CHAR8 *target, const CHAR8 *source, INTN n) {
 	return target;
 }
 
+CHAR8* strcata(CHAR8 *dest, const CHAR8 *src) {
+	CHAR8 *rdest = dest;
+	
+	while (*dest) {
+		dest++;
+	}
+	
+	while ((*dest++ = *src++));
+	return rdest;
+}
+
 CHAR8* strchra(const CHAR8 *s, int c) {
 	while (*s != (char)c) {
 		if (!*s++) {

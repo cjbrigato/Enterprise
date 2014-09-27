@@ -28,6 +28,7 @@ EFI_STATUS efi_get_variable(const EFI_GUID *, CHAR16 *, CHAR8 **, UINTN *);
 CHAR8* strcpya(CHAR8 *, const CHAR8 *);
 CHAR8* strchra(const CHAR8 *, int);
 CHAR8* strncpya(CHAR8 *, const CHAR8 *, INTN);
+CHAR8* strcata(CHAR8 *, const CHAR8 *);
 INTN strposa(const CHAR8 *, char);
 
 INTN NarrowToLongCharConvert(CHAR8 *InChar, OUT CHAR16 *);

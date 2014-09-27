@@ -45,7 +45,7 @@ typedef struct BootableLinuxDistro {
 	struct BootableLinuxDistro *next;
 } BootableLinuxDistro;
 
-EFI_STATUS BootLinuxWithOptions(CHAR16 *, int);
+EFI_STATUS BootLinuxWithOptions(CHAR16 *, UINT16);
 
 extern const EFI_GUID enterprise_variable_guid;
 extern const EFI_GUID grub_variable_guid;

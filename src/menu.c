@@ -190,6 +190,7 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 	UINT64 key;
 	err = key_read(&key, TRUE);
 	INTN index = key - '0';
+	index--; // C arrays start at index 0, but we start counting at 1, so compensate.
 	
 	if (index > iteratorIndex) {
 		// Reboot the system.
@@ -209,7 +210,8 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 EFI_STATUS DisplayMenu(void) {
 	EFI_STATUS err;
 	UINT64 key;
-	CHAR16 boot_options[150] = L"";
+	CHAR16 *boot_options;
+	boot_options = AllocatePool(sizeof(CHAR16) * 150);
 	
 	/*
 	 * Give the user some information as to what they can do at this point.

@@ -67,7 +67,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	}
 	
 	/* Setup global variables. */
-	int i;
+	INT32 i;
 	for (i = 0; i < PRESET_OPTIONS_SIZE; i++) {
 		preset_options_array[i] = 0; // We don't *need* to initalize, but do it anyway.
 	}
@@ -140,19 +140,15 @@ static EFI_STATUS SetupDisplay(VOID) {
 	return err;
 }
 
-EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
+EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 	EFI_STATUS err;
 	EFI_HANDLE image;
 	EFI_DEVICE_PATH *path;
 	
-	CHAR8 *sized_str = UTF16toASCII(params, StrLen(params) + 1);
-	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", sized_str,
-		sizeof(sized_str[0]) * strlena(sized_str) + 1, FALSE);
-	
 	// We need to move forward to the proper distribution struct.
 	BootableLinuxDistro *conductor = distributionListRoot->next;
 	
-	int i; for (i = 0; i < distribution && conductor != NULL; i++, conductor = conductor->next);
+	INTN i; for (i = 0; i < distribution && conductor != NULL; i++, conductor = conductor->next);
 	LinuxBootOption *boot_params = conductor->bootOption;
 	if (!boot_params) {
 		DisplayErrorText(L"Error: couldn't get Linux distribution boot settings.\n");
@@ -163,6 +159,19 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, int distribution) {
 	CHAR8 *initrd_path = boot_params->initrd_path;
 	CHAR8 *boot_folder = boot_params->boot_folder;
 	
+	CHAR8 *sized_str = UTF16toASCII(params, StrLen(params) + 1);
+	CHAR8 *kernel_parameters = NULL;
+	kernel_parameters = AllocatePool(sizeof(CHAR8) * (strlena(sized_str) + strlena(boot_params->kernel_options)));
+	strcpya(kernel_parameters, sized_str);
+	//if (boot_params->kernel_options && strlena(boot_params->kernel_options) > 0) {
+		Print(L"Appending...\n");
+		strcata(kernel_parameters, boot_params->kernel_options);
+	//}
+	
+	Print(L"Boot parameters: %a %a\n", kernel_parameters, boot_params->kernel_options);
+	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
+	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", kernel_parameters,
+		sizeof(kernel_parameters[0]) * strlena(kernel_parameters) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxKernelPath", kernel_path,
 		sizeof(kernel_path[0]) * strlena(kernel_path) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_InitRDPath", initrd_path,
