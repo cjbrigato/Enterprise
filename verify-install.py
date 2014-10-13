@@ -17,6 +17,9 @@
 #
 #
 from sys import exit
+from sys import argv
+import argparse
+import os
 """ Note: this program assumes that it is being executed from the
  root directory of a USB drive containing an installation of
  Enterprise.
@@ -24,6 +27,16 @@ from sys import exit
  	It verifies syntax and whether all required files are present."""
 def main():
 	"""The program's main method."""
+	## Parse command line arguments.
+	if len(argv) > 1:
+		parser = argparse.ArgumentParser(description="Ensures the validity of an Enterprise installation")
+		parser.add_argument("path", nargs=1, help="Check to the USB drive that you want to check (if ommitted, the program checks the current directory)")
+		#parser.add_argument("inpath", nargs='?', type=argparse.FileType('r'), default=os.getcwd())
+		
+		args = parser.parse_args()
+		os.chdir(args.path[0])
+
+	## Open file and setup variables.	
 	installValid = True
 	reason = ""
 

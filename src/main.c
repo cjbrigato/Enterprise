@@ -163,10 +163,10 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 	CHAR8 *kernel_parameters = NULL;
 	kernel_parameters = AllocatePool(sizeof(CHAR8) * (strlena(sized_str) + strlena(boot_params->kernel_options)));
 	strcpya(kernel_parameters, sized_str);
-	//if (boot_params->kernel_options && strlena(boot_params->kernel_options) > 0) {
+	if (boot_params->kernel_options && strlena(boot_params->kernel_options) > 0) {
 		Print(L"Appending...\n");
 		strcata(kernel_parameters, boot_params->kernel_options);
-	//}
+	}
 	
 	Print(L"Boot parameters: %a %a\n", kernel_parameters, boot_params->kernel_options);
 	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
