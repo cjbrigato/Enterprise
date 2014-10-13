@@ -84,6 +84,9 @@ def verifyConfigurationFile(file):
 			break
 		else:
 			line = chunk + file.readline()
+			if (chunk == os.linesep):
+				continue
+			
 			didSucceed, message = processConfigLine(line, validKeys)
 			if not (didSucceed):
 				print("Syntax error on line {0}: {1}" \
