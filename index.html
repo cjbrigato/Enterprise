@@ -141,15 +141,22 @@ kernel /casper/vmlinuz.efi</pre>
                     <tbody>
                         <tr>
                             <td>entry</td>
-                            <td><strong>Coming in a future version of Enterprise.</strong> Used to support booting multiple distributions from one Enterprise installation.</td>
+                            <td>Used to support booting multiple distributions from one Enterprise installation.</td>
                         </tr>
                         <tr>
                             <td>family</td>
-                            <td>Specifies the distribution family (e.g Ubuntu, Debian, etc) and sets the remaining options accordingly.</td>
+                            <td>Specifies the distribution family (e.g Ubuntu, Debian, etc) and sets the other options accordingly. This parameter is required if you do not want to specify any other options.</td>
                         </tr>
                         <tr>
                             <td>initrd</td>
                             <td>Specifies, relative to the root of the ISO, the absolute path to the Linux initial RAM disc.</td>
+                        </tr>
+                        <tr>
+                        	<td>iso</td>
+                        	<td>
+                        		The <em>absolute</em> path to the ISO that you wish to associate with this particular entry. If not specified, it defaults to <code>/efi/boot/boot.iso</code>.<br/>
+                        		<strong>Warning:</strong> Although an absolute path is not required, it is recommended, because the behavior of relative paths may change in the future.
+                        	</td>
                         </tr>
                         <tr>
                             <td>kernel</td>
