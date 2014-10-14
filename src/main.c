@@ -158,13 +158,13 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 	CHAR8 *kernel_path = boot_params->kernel_path;
 	CHAR8 *initrd_path = boot_params->initrd_path;
 	CHAR8 *boot_folder = boot_params->boot_folder;
+	CHAR8 *iso_path = boot_params->iso_path;
 	
 	CHAR8 *sized_str = UTF16toASCII(params, StrLen(params) + 1);
 	CHAR8 *kernel_parameters = NULL;
 	kernel_parameters = AllocatePool(sizeof(CHAR8) * (strlena(sized_str) + strlena(boot_params->kernel_options)));
 	strcpya(kernel_parameters, sized_str);
 	if (boot_params->kernel_options && strlena(boot_params->kernel_options) > 0) {
-		Print(L"Appending...\n");
 		strcata(kernel_parameters, boot_params->kernel_options);
 	}
 	
@@ -176,6 +176,8 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 		sizeof(kernel_path[0]) * strlena(kernel_path) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_InitRDPath", initrd_path,
 		sizeof(initrd_path[0]) * strlena(initrd_path) + 1, FALSE);
+	efi_set_variable(&grub_variable_guid, L"Enterprise_ISOPath", iso_path,
+		sizeof(iso_path[0]) * strlena(iso_path) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_BootFolder", boot_folder,
 		sizeof(boot_folder[0]) * strlena(boot_folder) + 1, FALSE);
 	
@@ -234,6 +236,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			BootableLinuxDistro *new = AllocateZeroPool(sizeof(BootableLinuxDistro));
 			new->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
 			AllocateMemoryAndCopyChar8String(new->bootOption->name, value);
+			AllocateMemoryAndCopyChar8String(new->bootOption->iso_path, (CHAR8 *)"/efi/boot/boot.iso"); // Set a default value.
 				
 			conductor->next = new;
 			new->next = NULL;
@@ -269,16 +272,22 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 				
 				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos);
 				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos);
-				Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
+				//Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
 				
 				CHAR8 *params = value + spaceCharPos + 1;
 				AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_options, params);
-				Print(L"conductor->bootOption->kernel_options = %a\n", conductor->bootOption->kernel_options);
+				//Print(L"conductor->bootOption->kernel_options = %a\n", conductor->bootOption->kernel_options);
 			} else {
 				AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_path, value);
 			}
 		} else if (strcmpa((CHAR8 *)"initrd", key) == 0) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->initrd_path, value);
+		} else if (strcmpa((CHAR8 *)"iso", key) == 0) {
+			strcpya(conductor->bootOption->iso_path, value);
+			if (conductor->bootOption->iso_path[0] != '/') {
+				Print(L"%a: Relative ISO paths might not work as you expect, and their behavior may change.\n" \
+					"Please consider using an absolute path from the root of the USB instead.", conductor->bootOption->name);
+			}
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->boot_folder, value);
 		} else {

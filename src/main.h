@@ -38,6 +38,7 @@ typedef struct LinuxBootOption {
 	CHAR8 *kernel_options;
 	CHAR8 *initrd_path;
 	CHAR8 *boot_folder;
+	CHAR8 *iso_path;
 } LinuxBootOption;
 
 typedef struct BootableLinuxDistro {

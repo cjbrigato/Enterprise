@@ -31,7 +31,6 @@ def main():
 	if len(argv) > 1:
 		parser = argparse.ArgumentParser(description="Ensures the validity of an Enterprise installation")
 		parser.add_argument("path", nargs=1, help="Check to the USB drive that you want to check (if ommitted, the program checks the current directory)")
-		#parser.add_argument("inpath", nargs='?', type=argparse.FileType('r'), default=os.getcwd())
 		
 		args = parser.parse_args()
 		os.chdir(args.path[0])
@@ -89,8 +88,7 @@ def verifyConfigurationFile(file):
 			
 			didSucceed, message = processConfigLine(line, validKeys)
 			if not (didSucceed):
-				print("Syntax error on line {0}: {1}" \
-					.format(lineNumber, message))
+				print("Syntax error on line {0}: {1}".format(lineNumber, message))
 				verifyIsValid = False
 		lineNumber += 1
 	return verifyIsValid
@@ -112,7 +110,7 @@ def processConfigLine(line, validKeys):
 def fileExists(file):
 	"""Check if a file exists."""
 	try:
-		open(file)
+		open(file).close()
 		return True
 	except IOError:
 		return False
