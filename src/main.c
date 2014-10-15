@@ -145,6 +145,8 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 	EFI_HANDLE image;
 	EFI_DEVICE_PATH *path;
 	
+	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
+	
 	// We need to move forward to the proper distribution struct.
 	BootableLinuxDistro *conductor = distributionListRoot->next;
 	
@@ -168,7 +170,6 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 		strcata(kernel_parameters, boot_params->kernel_options);
 	}
 	
-	Print(L"Boot parameters: %a %a\n", kernel_parameters, boot_params->kernel_options);
 	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", kernel_parameters,
 		sizeof(kernel_parameters[0]) * strlena(kernel_parameters) + 1, FALSE);

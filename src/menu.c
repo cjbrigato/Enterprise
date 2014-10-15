@@ -199,8 +199,6 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 		// Should never get here unless there's an error.
 		Print(L"Error calling ResetSystem: %r", err);
 		uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
-	} else {
-		Print(L"You selected option %d.\n", index);
 	}
 	
 	err = BootLinuxWithOptions(bootOptions, index);
