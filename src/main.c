@@ -236,7 +236,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			BootableLinuxDistro *new = AllocateZeroPool(sizeof(BootableLinuxDistro));
 			new->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
 			AllocateMemoryAndCopyChar8String(new->bootOption->name, value);
-			AllocateMemoryAndCopyChar8String(new->bootOption->iso_path, (CHAR8 *)"/efi/boot/boot.iso"); // Set a default value.
+			AllocateMemoryAndCopyChar8String(new->bootOption->iso_path, (CHAR8 *)"boot.iso"); // Set a default value.
 				
 			conductor->next = new;
 			new->next = NULL;
