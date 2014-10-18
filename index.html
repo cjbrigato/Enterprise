@@ -2,206 +2,308 @@
 <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
-<head>
+<!--[if (gte IE 9)|!(IE)]><!-->
 
-	<!-- Basic Page Needs
+<html lang="en">
+<!--<![endif]-->
+
+<head>
+	<meta name="generator" content=
+	"HTML Tidy for Linux/x86 (vers 25 March 2009), see www.w3.org"><!-- Basic Page Needs
   ================================================== -->
 	<meta charset="utf-8">
+
 	<title>Enterprise EFI Linux Loader</title>
 	<meta name="description" content="">
-	<meta name="author" content="">
-
-	<!-- Mobile Specific Metas
+	<meta name="author" content=""><!-- Mobile Specific Metas
   ================================================== -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
 	<!-- CSS
   ================================================== -->
-	<link rel="stylesheet" href="stylesheets/base.css">
-	<link rel="stylesheet" href="stylesheets/skeleton.css">
-	<link rel="stylesheet" href="stylesheets/layout.css">
-    <link rel="stylesheet" href="stylesheets/table.css">
-
-	<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-	<![endif]-->
-
+	<link rel="stylesheet" href="stylesheets/base.css" type="text/css">
+	<link rel="stylesheet" href="stylesheets/skeleton.css" type="text/css">
+	<link rel="stylesheet" href="stylesheets/layout.css" type="text/css">
+	<link rel="stylesheet" href="stylesheets/table.css" type="text/css"><!--[if lt IE 9]>
+				<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 	<!-- Favicons
-	================================================== -->
+		================================================== -->
 	<link rel="shortcut icon" href="images/favicon.ico">
 	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
 	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
-
+	<link rel="apple-touch-icon" sizes="114x114" href=
+	"images/apple-touch-icon-114x114.png">
 </head>
+
 <body>
-
-
-
 	<!-- Primary Page Layout
-	================================================== -->
-
+		================================================== -->
 	<!-- Delete everything in this .container and get started on your own site! -->
 
 	<div class="container">
 		<div class="sixteen columns">
 			<h1 class="remove-bottom" style="margin-top: 40px">Enterprise</h1>
+
 			<h5>An EFI Linux Loader for UEFI Macs</h5>
-			<hr />
+			<hr>
 		</div>
-        
-        <div class="row">
-		<div class="four columns">
-			<h3>Get Enterprise</h3>
-			<p>Current Version: 0.1.1</p>
-            <p>Enterprise can be obtained from the official repository on Github. Click on the links below to be directed to the appropriate pages:</p>
-            
-            <p><strong>Stable:</strong></p>
-            <p>There are currently no stable releases.</p>
-            
-            <p><strong>Unstable:</strong></p>
-            <p><a href="https://github.com/SevenBits/Enterprise/releases/download/v0.2.1-beta/Enterprise-0.2.1.tar.gz">Version 0.2.1</a> (15 October 2014)</p>
-            <p><a href="javascript:void(0);">Version 0.1.1</a> (19 December 2013)</p>
-            <p><a href="https://github.com/SevenBits/Enterprise/archive/master.zip" target="_blank">Current Source on Github</a></p>
-            
-            <p>Please note that obtaining Enterprise in this fashion means doing lots of setup work. If you simply want to create a bootable USB, please consider using <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac Linux USB Loader</a>, which sets up Enterprise for you.</p>
-		</div>
-		<div class="twelve columns">
-            <div>
-                <img src="images/BlueEnterpriseBanner.png" alt="Enterprise logo banner" style="width: 100%;"/>
-            </div>
-			<h3>What Is Enterprise?</h3>
-            <div>
-                <iframe src="http://ghbtns.com/github-btn.html?user=sevenbits&amp;repo=enterprise&amp;type=watch&amp;count=true&amp;size=small" width="150" height="20" style="float: left;"></iframe>
-                <a href="https://travis-ci.org/SevenBits/Enterprise" style="float: left;">
-                    <img src="https://travis-ci.org/SevenBits/Enterprise.png" alt="Travis Build Status">
-                </a>
-            </div>
-            <br class="clear" />
-			<p>Enterprise (named after the Starship Enterprise from <em>Star Trek</em>) is an EFI program that is designed to assist in booting Linux distributions on USB sticks on Intel Macs, something that is continously regarded as being near to impossible due to EFI quirks and really quite poor support from Linux distributions.</p>
-            <p>The program is quite unique. It is written in C, and can be compiled to run on both 32&#45;bit and 64&#45;bit EFI firmware types. Right now, all official downloads are for the <strong>64-bit architecture</strong> only.</p>
-            <p>It is designed to compliment <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac Linux USB Loader</a>, though it can also be used separately (albeit with some setup work). The purpose of Enterprise is as the first stage in a two-stage booting process for Mac Linux USB Loader-created USB drives.</p>
-            <p>Please note that this page is oriented for technical users, such as hardware and/or software enthuasists, programmers, and people who like to hack their firmware. It is not intended for casual users &#45; beware!</p>
-            
-            <h4>The Basics</h4>
-            
-            <p>Once upon a time, everything was happy in computer-land. Our PCs were booting, our memory sufficed, and the children were happy. But then Mr. Turing had to curse us with the &lt;sarcasm&gt; evil of technological progress &lt;&frasl;sarcasm&gt;, and eventually our nice, peaceful solutions didn't work anymore. All of a sudden, our multi&#45;terabyte drives couldn't be booted from, and our old 16&#45;bit BIOSes couldn't boot our cool, newfangled 64&#45;bit multicore operating systems. Woe was us!</p>
-            <p>But our computer engineers, clever as they are, dug up an old, largely forgotten future&#45;proof boot specification, UEFI. And from there, the rest is history.</p>
 
-            <h4>Installation and Use</h4>
+		<div class="row">
+			<div class="four columns">
+				<h3>Get Enterprise</h3>
 
-            <p>Enterprise is intended as a tool to be used alongside Mac Linux USB Loader, and so it is not really intended to be installed in the same manner as one would install a traditional bootloader like GRUB. That being said, it is possible to use Enterprise without Mac Linux USB Loader, as they are wholly separate tools, however in this circumstance additional setup is required.</p>
-            <p>To get the best performance from Enterprise, and to take advantage of any super cool stuff I add to it, you should download the source code, as the official repository includes a number of tools to assist in setup.</p>
-            <p>However, for beginners and casual users, you should begin by downloading the Enterprise binaries. You can do that at the pane to the left. Then you need to set up a configuration file on your USB drive under the EFI/BOOT directory &#40;which should be created if it doesn't exist&#41; named <em>.MLUL&#45;Live&#45;USB</em> which tells Enterprise details about the distribution that you want to boot from your USB drive. Here's a sample file:</p>
-            
-            <!--<p>
-                <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
-                    <pre style="margin: 0; line-height: 125%">
+				<p>Current Version: 0.1.1</p>
+
+				<p>Enterprise can be obtained from the official repository on Github.
+				Click on the links below to be directed to the appropriate pages:</p>
+
+				<p><strong>Stable:</strong></p>
+
+				<p>There are currently no stable releases.</p>
+
+				<p><strong>Unstable:</strong></p>
+
+				<p><a href=
+				"https://github.com/SevenBits/Enterprise/releases/download/v0.2.1-beta/Enterprise-0.2.1.tar.gz">
+				Version 0.2.1</a> (15 October 2014)</p>
+
+				<p><a href="javascript:void(0);">Version 0.1.1</a> (19 December 2013)</p>
+
+				<p><a href="https://github.com/SevenBits/Enterprise/archive/master.zip"
+				target="_blank">Current Source on Github</a></p>
+
+				<p>Please note that obtaining Enterprise in this fashion means doing lots
+				of setup work. If you simply want to create a bootable USB, please
+				consider using <a href="http://sevenbits.github.io/Mac-Linux-USB-Loader/"
+				target="_blank">Mac Linux USB Loader</a>, which sets up Enterprise for
+				you.</p>
+			</div>
+
+			<div class="twelve columns">
+				<div><img src="images/BlueEnterpriseBanner.png" alt=
+				"Enterprise logo banner" style="width: 100%;"></div>
+
+				<h3>What Is Enterprise?</h3>
+
+				<div>
+					<iframe src=
+					"http://ghbtns.com/github-btn.html?user=sevenbits&amp;repo=enterprise&amp;type=watch&amp;count=true&amp;size=small"
+					width="150" height="20" style="float: left;"></iframe> <a href=
+					"https://travis-ci.org/SevenBits/Enterprise" style=
+					"float: left;"><img src=
+					"https://travis-ci.org/SevenBits/Enterprise.png" alt=
+					"Travis Build Status"></a>
+				</div><br class="clear">
+
+				<p>Enterprise (named after the Starship Enterprise from <em>Star
+				Trek</em>) is an EFI program that is designed to assist in booting Linux
+				distributions from USB sticks on Intel Macs, something that is
+				continously regarded as being near to impossible due to quirks in Apple's
+				EFI implementation and really quite poor support from Linux
+				distributions.</p>
+
+				<p>The program is quite unique. It is written in C, and can be compiled
+				to run on both 32-bit and 64-bit EFI firmware types. Right now, all
+				official downloads are for the <strong>64-bit architecture</strong>
+				only.</p>
+
+				<p>It is designed to compliment <a href=
+				"http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac
+				Linux USB Loader</a>, though it can also be used separately (albeit with
+				some setup work). The purpose of Enterprise is as the first stage in a
+				two-stage booting process for Mac Linux USB Loader-created USB
+				drives.</p>
+
+				<p>Please note that this page is oriented for technical users, such as
+				hardware and/or software enthuasists, programmers, and people who like to
+				hack their firmware. It is not intended for casual users - beware!</p>
+
+				<h4>The Basics</h4>
+
+				<p>Once upon a time, everything was happy in computer-land. Our PCs were
+				booting, our memory sufficed, and the children were happy. But then Mr.
+				Turing had to curse us with the &lt;sarcasm&gt; evil of technological
+				progress &lt;&#8260;sarcasm&gt;, and eventually our nice, peaceful
+				solutions didn't work anymore. All of a sudden, our multi-terabyte drives
+				couldn't be booted from, and our old 16-bit BIOSes couldn't boot our
+				cool, newfangled 64-bit multicore operating systems. Woe was us!</p>
+
+				<p>But our computer engineers, clever as they are, dug up an old, largely
+				forgotten future-proof boot specification, UEFI. And from there, the rest
+				is history.</p>
+
+				<h4>Installation and Use</h4>
+
+				<p>Enterprise is intended as a tool to be used alongside Mac Linux USB
+				Loader, and so it is not really intended to be installed in the same
+				manner as one would install a traditional bootloader like GRUB. That
+				being said, it is possible to use Enterprise without Mac Linux USB
+				Loader, as they are wholly separate tools, however in this circumstance
+				additional setup is required.</p>
+
+				<p>To get the best performance from Enterprise, and to take advantage of
+				any super cool stuff I add to it, you should download the source code, as
+				the official repository includes a number of tools to assist in
+				setup.</p>
+
+				<p>However, for beginners and casual users, you should begin by
+				downloading the Enterprise binaries. You can do that at the pane to the
+				left. Then you need to set up a configuration file on your USB drive
+				under the EFI/BOOT directory (which should be created if it doesn't
+				exist) named <em>.MLUL-Live-USB</em> which tells Enterprise details about
+				the distribution that you want to boot from your USB drive. Here's a
+				sample file:</p>
+				<!--<p>
+					<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+						<pre style="margin: 0; line-height: 125%">
 # Lines beginning with a pound sign are comments. They are ignored during parsing.
 family Ubuntu
 kernel /casper/vmlinuz.efi</pre>
-                </div>
-            </p>-->
-            <script src="https://gist.github.com/SevenBits/466f078ac3dfbd028a4b.js"></script>
-            
-            <p>At the very minimum, you need <em>at least</em> the <code>family</code> parameter. This tells Enterprise which distribution you are trying to boot and loads default options based on this. All of these default options can be overwritten. The default options for each parameter are:</p>
-            <p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Distribution</th>
-                            <th>Default Values</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        <tr>
-                            <td>Ubuntu</td>
-                            <td> <strong>kernel: </strong>/casper/vmlinuz <strong>initrd: </strong>/casper/initrd.lz </td>
-                        </tr>
-                        <tr>
-                            <td>Debian</td>
-                            <td> <strong>kernel: </strong>/live/vmlinuz <strong>initrd: </strong>/live/initrd.img </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </p>
-            
-            <p>Naturally, the <code>kernel</code> and <code>initrd</code> parameters can be altered by adding the respective line to the <em>.MLUL&#45;Live&#45;USB</em> file. This is demonstrated above with the <code>kernel</code> parameter. You can pass a variety of additional options, including&#58;</p>
-            
-            <p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Parameter</th>
-                            <th>Effect</th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        <tr>
-                            <td>entry</td>
-                            <td>Used to support booting multiple distributions from one Enterprise installation.</td>
-                        </tr>
-                        <tr>
-                            <td>family</td>
-                            <td>Specifies the distribution family (e.g Ubuntu, Debian, etc) and sets the other options accordingly. This parameter is required if you do not want to specify any other options.</td>
-                        </tr>
-                        <tr>
-                            <td>initrd</td>
-                            <td>Specifies, relative to the root of the ISO, the absolute path to the Linux initial RAM disc.</td>
-                        </tr>
-                        <tr>
-                        	<td>iso</td>
-                        	<td>
-                        		The path to the ISO that you wish to associate with this particular entry relative to the location of the Enterprise binary. If not specified, it defaults to <code>boot.iso</code>.<br/>
-                        		<strong>Warning:</strong> The behavior of this parameter may change in the future.
-                        	</td>
-                        </tr>
-                        <tr>
-                            <td>kernel</td>
-                            <td>
-                            	Specifies, relative to the root of the ISO, the absolute path to the Linux kernel. <br/>
-                            	<strong>Note:</strong> It is possible to pass custom options to this kernel by specifying them after the path. See above for an example.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>root</td>
-                            <td>Specifies the location of the kernel and initrd. Passed to the Linux kernel as <code>boot=XXX</code>, where XXX is the value of this parameter.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </p>
-            
-            <p>Have questions or comments? Feel free to <a href="http://sevenbits.github.io/contact.html">contact me</a> with any requests, etc.</p>
-        
-            <h4>Contributions</h4>
-        
-            <p>For those of you in the know, I code using a style called <a href="https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS" target="_blank">1TBS</a> - or, the one true brace style. I quite like it. So much so, in fact, that it's the required syntax style (just so things don't get messy). For those of you who are not familiar with it, it is best demonstrated with an example:</p>
-            <p>
-                <div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">if</span> (<span style="color: #007020">true</span>) {
-    bob();
+					</div>
+				</p>-->
+				<script src="https://gist.github.com/SevenBits/466f078ac3dfbd028a4b.js"
+				type="text/javascript">
+</script>
+
+				<p>At the very minimum, you need <em>at least</em> the
+				<code>family</code> parameter. This tells Enterprise which distribution
+				you are trying to boot and loads default options based on this. All of
+				these default options can be overwritten. The default options for each
+				parameter are:</p>
+
+				<table>
+					<thead>
+						<tr>
+							<th>Distribution</th>
+
+							<th>Default Values</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr>
+							<td>Ubuntu</td>
+
+							<td><strong>kernel:</strong> /casper/vmlinuz
+							<strong>initrd:</strong> /casper/initrd.lz</td>
+						</tr>
+
+						<tr>
+							<td>Debian</td>
+
+							<td><strong>kernel:</strong> /live/vmlinuz
+							<strong>initrd:</strong> /live/initrd.img</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p>Naturally, the <code>kernel</code> and <code>initrd</code> parameters
+				can be altered by adding the respective line to the
+				<em>.MLUL-Live-USB</em> file. This is demonstrated above with the
+				<code>kernel</code> parameter. You can pass a variety of additional
+				options, including:</p>
+
+				<table>
+					<thead>
+						<tr>
+							<th>Parameter</th>
+
+							<th>Effect</th>
+						</tr>
+					</thead>
+
+					<tbody>
+						<tr>
+							<td>entry</td>
+
+							<td>Used to support booting multiple distributions from one
+							Enterprise installation.</td>
+						</tr>
+
+						<tr>
+							<td>family</td>
+
+							<td>Specifies the distribution family (e.g Ubuntu, Debian,
+							etc) and sets the other options accordingly. This parameter
+							is required if you do not want to specify any other
+							options.</td>
+						</tr>
+
+						<tr>
+							<td>initrd</td>
+
+							<td>Specifies, relative to the root of the ISO, the absolute
+							path to the Linux initial RAM disc.</td>
+						</tr>
+
+						<tr>
+							<td>iso</td>
+
+							<td>The path to the ISO that you wish to associate with this
+							particular entry relative to the location of the Enterprise
+							binary. If not specified, it defaults to
+							<code>boot.iso</code>.<br>
+							<strong>Warning:</strong> The behavior of this parameter may
+							change in the future.</td>
+						</tr>
+
+						<tr>
+							<td>kernel</td>
+
+							<td>Specifies, relative to the root of the ISO, the absolute
+							path to the Linux kernel.<br>
+							<strong>Note:</strong> It is possible to pass custom options
+							to this kernel by specifying them after the path. See above
+							for an example.</td>
+						</tr>
+
+						<tr>
+							<td>root</td>
+
+							<td>Specifies the location of the kernel and initrd. Passed
+							to the Linux kernel as <code>boot=XXX</code>, where XXX is
+							the value of this parameter.</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p>Have questions or comments? Feel free to <a href=
+				"http://sevenbits.github.io/contact.html">contact me</a> with any
+				requests, etc.</p>
+
+				<h4>Contributions</h4>
+
+				<p>For those of you in the know, I code using a style called <a href=
+				"https://en.wikipedia.org/wiki/Indent_style#Variant:_1TBS" target=
+				"_blank">1TBS</a> - or, the one true brace style. I quite like it. So
+				much so, in fact, that it's the required syntax style (just so things
+				don't get messy). For those of you who are not familiar with it, it is
+				best demonstrated with an example:</p>
+
+				<div style=
+				"background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+				<pre style="margin: 0; line-height: 125%">
+<span style="color: #008800; font-weight: bold">if</span> (<span style=
+"color: #007020">true</span>) {
+		bob();
 } <span style="color: #008800; font-weight: bold">else</span> {
-    sam();
+		sam();
 }
-</pre></div>
-            </p>
-            <p>That should suffice for an explanation. Looking forward to seeing how everyone uses this!</p>
-		</div>
-        </div> <!-- end row -->
-        
-        <div class="row">
-            <div class="three.columns offset-by-thirteen">
-                <small>Proudly made in America!</small>
-                <img src="images/united_states_of_america.png" alt="The USA flag"/>
-            </div>
-        </div> <!-- end row -->
+</pre>
+				</div>
 
+				<p>That should suffice for an explanation. Looking forward to seeing how
+				everyone uses this!</p>
+			</div>
+		</div><!-- end row -->
+
+		<div class="row">
+			<div class="three.columns offset-by-thirteen"><small>Proudly made in
+			America!</small> <img src="images/united_states_of_america.png" alt=
+			"The USA flag"></div>
+		</div><!-- end row -->
 	</div><!-- container -->
-
-
-<!-- End Document
+	<!-- End Document
 ================================================== -->
 </body>
 </html>
