@@ -21,6 +21,7 @@ table {
 	background:#eaebec;
 	border:#ccc 1px solid;
     
+  border-spacing: 1px;
   width: 100%;
 
 	-moz-border-radius:3px;
