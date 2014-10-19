@@ -100,14 +100,17 @@
 				distributions from USB sticks on Intel Macs, something that is
 				continously regarded as being near to impossible due to quirks in Apple's
 				EFI implementation and really quite poor support from Linux
-				distributions.</p>
+				distributions. Using Enterprise, you can create bootable USB drives
+				that boot on your Mac <strong>without</strong> needing rEFIt or
+				rEFInd to be installed.</p>
 
 				<p>The program is quite unique. It is written in C, and can be compiled
 				to run on both 32-bit and 64-bit EFI firmware types. Right now, all
-				official downloads are for the <strong>64-bit architecture</strong>
-				only.</p>
+				official downloads are for <strong>64-bit EFI firmware architectures</strong>
+				only. Be aware that certain 64-bit Macs have 32-bit EFI firmwares, and
+				the supplied Enterprise binaries won't work on these platforms.</p>
 
-				<p>It is designed to compliment <a href=
+				<p>Enterprise is designed to compliment <a href=
 				"http://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac
 				Linux USB Loader</a>, though it can also be used separately (albeit with
 				some setup work). The purpose of Enterprise is as the first stage in a
@@ -142,9 +145,10 @@
 				additional setup is required.</p>
 
 				<p>To get the best performance from Enterprise, and to take advantage of
-				any super cool stuff I add to it, you should download the source code, as
-				the official repository includes a number of tools to assist in
-				setup.</p>
+				any super cool stuff I add to it, you should
+				<a href="https://github.com/SevenBits/Enterprise/archive/master.zip">download the
+				source code</a>, as the official repository includes a number of tools
+				to assist in setup.</p>
 
 				<p>However, for beginners and casual users, you should begin by
 				downloading the Enterprise binaries. You can do that at the pane to the
