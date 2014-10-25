@@ -285,10 +285,6 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->initrd_path, value);
 		} else if (strcmpa((CHAR8 *)"iso", key) == 0) {
 			strcpya(conductor->bootOption->iso_path, value);
-			if (conductor->bootOption->iso_path[0] != '/') {
-				Print(L"%a: Relative ISO paths might not work as you expect, and their behavior may change.\n" \
-					"Please consider using an absolute path from the root of the USB instead.", conductor->bootOption->name);
-			}
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->boot_folder, value);
 		} else {
