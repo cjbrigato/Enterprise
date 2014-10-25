@@ -22,15 +22,16 @@ import argparse
 import os
 """ Note: this program assumes that it is being executed from the
  root directory of a USB drive containing an installation of
- Enterprise.
+ Enterprise. It is possible to pass on the command line the drive
+ to check, however.
 
- 	It verifies syntax and whether all required files are present."""
+ It verifies syntax and whether all required files are present."""
 def main():
 	"""The program's main method."""
 	## Parse command line arguments.
 	if len(argv) > 1:
 		parser = argparse.ArgumentParser(description="Ensures the validity of an Enterprise installation")
-		parser.add_argument("path", nargs=1, help="Check to the USB drive that you want to check (if ommitted, the program checks the current directory)")
+		parser.add_argument("path", nargs=1, help="Path to the USB drive that you want to check (if ommitted, the program checks the current directory)")
 		
 		args = parser.parse_args()
 		os.chdir(args.path[0])
