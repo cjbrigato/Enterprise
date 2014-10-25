@@ -170,7 +170,6 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 		strcata(kernel_parameters, boot_params->kernel_options);
 	}
 	
-	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", kernel_parameters,
 		sizeof(kernel_parameters[0]) * strlena(kernel_parameters) + 1, FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxKernelPath", kernel_path,
