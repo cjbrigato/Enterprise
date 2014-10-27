@@ -5,7 +5,7 @@ Enterprise
 
 This source code archive contains code for Enterprise, a custom UEFI bootloader designed to load Linux distributions, even those without UEFI booting support, directly from ISO files on Apple Macintosh computers. It is designed to compliment [Mac Linux USB Loader](https://github.com/SevenBits/Mac-Linux-USB-Loader), though it can also be used separately (albeit with some setup work). The purpose of Enterprise is as the first stage in a two-stage booting process for Mac Linux USB Loader-created USB drives. Essentially, Enterprise loads GRUB, giving it configuration settings and the location of necessary files inside of the desired ISO, and then the distribution is booted.
 
-Enterprise will soon support booting multiple distributions, so you can have more than one distribution per USB stick. This way, you can test out multiple distributions.
+Enterprise now supports booting multiple distributions, so you can have more than one distribution per USB stick. This way, you can test out multiple distributions.
 
 Now, with that out the way (phew!), let's get to the interesting stuff, shall we?
 
@@ -43,7 +43,7 @@ I will accept pull requests on two conditions:
 1. Your code follows my coding styles (mentioned above) and
 2. Your code is licensed under an LGPL-compatible license and is readable and decently commented.
 
-Assuming that your code is in compliance with these rules, I usually will accept pull requests that either: add a feature/fix a bug that is listed via the checkboxes above or fix an issue filed through GitHub.
+Assuming that your code is in compliance with these rules, I usually will accept pull requests that either: add a feature/fix a bug that is listed above or fix an issue filed through GitHub.
 
 ### FINAL THOUGHTS ###
 

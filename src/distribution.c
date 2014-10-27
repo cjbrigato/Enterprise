@@ -27,7 +27,7 @@ CHAR8* KernelLocationForDistributionName(CHAR8 *name, OUT CHAR8 **boot_folder) {
 		return (CHAR8 *)"/live/vmlinuz";
 	} else if (strcmpa((CHAR8 *)"Ubuntu", name) == 0 || strcmpa((CHAR8 *)"Mint", name) == 0) {
 		*boot_folder = (CHAR8 *)"casper";
-		return (CHAR8 *)"/casper/vmlinuz";
+		return (CHAR8 *)"/casper/vmlinuz.efi";
 	} else {
 		return (CHAR8 *)"";
 	}
