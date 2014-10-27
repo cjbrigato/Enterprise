@@ -34,10 +34,10 @@ static EFI_STATUS console_text_mode(VOID);
 static EFI_STATUS SetupDisplay(VOID);
 UINTN numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable = 0;
 
-static EFI_LOADED_IMAGE *this_image = NULL;
+EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;
 
-static EFI_HANDLE global_image = NULL; // EFI_HANDLE is a typedef to a VOID pointer.
+EFI_HANDLE global_image = NULL; // EFI_HANDLE is a typedef to a VOID pointer.
 BootableLinuxDistro *distributionListRoot;
 
 /* entry function for EFI */
@@ -143,7 +143,7 @@ static EFI_STATUS SetupDisplay(VOID) {
 EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 	EFI_STATUS err;
 	EFI_HANDLE image;
-	EFI_DEVICE_PATH *path;
+	EFI_DEVICE_PATH *path = NULL;
 	
 	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
 	

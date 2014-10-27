@@ -234,7 +234,6 @@ EFI_STATUS DisplayMenu(void) {
 		uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 	}
 	
-	uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 	return EFI_SUCCESS;
 }
 
@@ -287,7 +286,7 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 			return err;
 		}
 		
-		int index = key - '0';
+		UINT64 index = key - '0';
 		options_array[index - 1] = !options_array[index - 1];
 	} while(key != '0');
 	
