@@ -17,7 +17,7 @@
  #
 ARCH            = $(shell uname -m | sed s,i[3456789]86,ia32,)
 
-OBJS            = main.o menu.o utils.o distribution.o
+EFI-OBJS        = main.o menu.o utils.o distribution.o
 TARGET          = enterprise.efi
 
 EFIINC          = /usr/local/include/efi
@@ -42,8 +42,8 @@ clean:
 	rm *.o
 	rm *.so
 
-enterprise.so: $(OBJS)
-	ld $(LDFLAGS) $(OBJS) -o $@ -lefi -lgnuefi
+enterprise.so: $(EFI-OBJS)
+	ld $(LDFLAGS) $(EFI-OBJS) -o $@ -lefi -lgnuefi
 
 %.efi: %.so
 	objcopy -j .text -j .sdata -j .data -j .dynamic \
