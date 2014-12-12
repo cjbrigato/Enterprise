@@ -137,6 +137,12 @@ static EFI_STATUS SetupDisplay(VOID) {
 	
 	Print(L"Setting display to be in mode %d.\n", highestModeNumberAvailable - 1);
 	err = uefi_call_wrapper(ST->ConOut->SetMode, 2, ST->ConOut, highestModeNumberAvailable - 1);
+	if (EFI_ERROR(err)) {
+		DisplayErrorText(L"Can't set display mode! ");
+		Print(L"%r\n", err);
+		uefi_call_wrapper(BS->Stall, 1, 500 * 1000);
+	}
+	
 	return err;
 }
 
