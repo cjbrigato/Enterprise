@@ -25,6 +25,8 @@
 #include "utils.h"
 #include "distribution.h"
 
+static void ShowAboutPage(VOID);
+
 #define KEYPRESS(keys, scan, uni) ((((UINT64)keys) << 32) | ((scan) << 16) | (uni))
 #define EFI_SHIFT_STATE_VALID           0x80000000
 #define EFI_RIGHT_CONTROL_PRESSED       0x00000004
@@ -211,6 +213,8 @@ EFI_STATUS DisplayMenu(void) {
 	CHAR16 *boot_options;
 	boot_options = AllocatePool(sizeof(CHAR16) * 150);
 	
+	start:
+	
 	/*
 	 * Give the user some information as to what they can do at this point.
 	 */
@@ -220,11 +224,19 @@ EFI_STATUS DisplayMenu(void) {
 	Print(L"    2) Modify Linux kernel boot options (advanced!)\n");
 	Print(L"\n    Press any other key to reboot the system.\n");
 	
+	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, numberOfDisplayRows - 1, 0);
+	Print(L"    ESC) About Enterprise");
+	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, 0);
+	
 	err = key_read(&key, TRUE);
 	if (key == '1') {
 		DisplayDistributionSelector(distributionListRoot, L"");
 	} else if (key == '2') {
 		ConfigureKernel(boot_options, preset_options_array, PRESET_OPTIONS_SIZE);
+	} else if (key == 1507328) { // Escape key
+		ShowAboutPage();
+		uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
+		goto start;
 	} else {
 		// Reboot the system.
 		err = uefi_call_wrapper(RT->ResetSystem, 4, EfiResetCold, EFI_SUCCESS, 0, NULL);
@@ -235,6 +247,26 @@ EFI_STATUS DisplayMenu(void) {
 	}
 	
 	return EFI_SUCCESS;
+}
+
+static void ShowAboutPage(VOID) {
+	UINT64 sig = ST->Hdr.Signature;
+	uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut); // Clear the screen.
+	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, 0);
+	
+	// Print the Enterprise info and the system firmware version.
+	DisplayColoredText(L"\n\n    Enterprise ");
+	Print(L"%d.%d.%d\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
+	Print(L"    EFI: %s %d\n", ST->FirmwareVendor, ST->FirmwareRevision);
+	if ((sig & EFI_2_20_SYSTEM_TABLE_REVISION) || (sig & EFI_2_10_SYSTEM_TABLE_REVISION) || (sig & EFI_2_00_SYSTEM_TABLE_REVISION)) {
+		Print(L"    UEFI 2.0 supported\n\n");
+	} else {
+		DisplayErrorText(L"    UEFI 2.0 not supported!\n\n");
+	}
+	
+	Print(L"    Press any key to go back.");
+	UINT64 key;
+	key_read(&key, TRUE);
 }
 
 static int options_array[20];

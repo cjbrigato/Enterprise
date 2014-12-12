@@ -20,6 +20,12 @@
 #ifndef _main_h
 #define _main_h
 
+#define EFI_2_20_SYSTEM_TABLE_REVISION ((2<<16) | (20))
+#define EFI_2_10_SYSTEM_TABLE_REVISION ((2<<16) | (10))
+#define EFI_2_00_SYSTEM_TABLE_REVISION ((2<<16) | (00))
+#define EFI_1_10_SYSTEM_TABLE_REVISION ((1<<16) | (10))
+#define EFI_1_02_SYSTEM_TABLE_REVISION ((1<<16) | (02))
+
 #define banner L"Welcome to Enterprise! - Version %d.%d.%d\n"
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 2
