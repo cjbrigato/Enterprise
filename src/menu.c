@@ -222,11 +222,8 @@ EFI_STATUS DisplayMenu(void) {
 	Print(L"    Press the key corresponding to the number of the option that you want.\n");
 	Print(L"\n    1) Boot Linux from ISO file\n");
 	Print(L"    2) Modify Linux kernel boot options (advanced!)\n");
+	Print(L"    ESC) About Enterprise\n");
 	Print(L"\n    Press any other key to reboot the system.\n");
-	
-	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, numberOfDisplayRows - 1, 0);
-	Print(L"    ESC) About Enterprise");
-	uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, 0);
 	
 	err = key_read(&key, TRUE);
 	if (key == '1') {
