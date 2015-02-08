@@ -224,6 +224,21 @@ INTN NarrowToLongCharConvert(CHAR8 *InString, CHAR16 *c) {
 	return len;
 }
 
+/**
+ * Converts between different path formats. This is a very rudimentary search and does not work
+ * correctly if there is more than one type of path separator in a string.
+ */
+CHAR8* PathConvert(CHAR8 needle, CHAR8 *path) {
+	// Iterate through path, replacing all path separators with needle.
+	for (INTN i = 0; path[i] != '\0'; i++) {
+		if (path[i] == '/' || path[i] == '\\' || path[i] == ':') {
+			path[i] = needle;
+		}
+	}
+	
+	return path;
+}
+
 BOOLEAN FileExists(EFI_FILE_HANDLE dir, CHAR16 *name) {
 	EFI_FILE_HANDLE handle;
 	EFI_STATUS err;
