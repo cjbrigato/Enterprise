@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
  *
- * Copyright (C) 2013 SevenBits
+ * Copyright (C) 2015 SevenBits
  *
  */
 
@@ -21,6 +21,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <sys/stat.h>
+
 static char *install_path;
 static char *config_path;
 
@@ -28,7 +30,7 @@ static bool should_verify;
 
 void usage(char *prog_name) {
 	printf("usage: %s [--verify] [--config file] path\n", prog_name);
-	printf("\t--verify\t\tVerify that the installation is configuration properly after setup\n");
+	printf("\t--verify\t\tVerify that the installation is configured properly after setup\n");
 	printf("\t--config file\t\tSpecifies the path to the configuration file\n");
 }
 
@@ -91,15 +93,38 @@ void parse_args(int argc, char **argv) {
 				fprintf(stderr, "Error: failed to allocate memory\n");
 				exit(1);
 			}
+			
+			strcpy(install_path, *arg_ptr);
 		}
 		
 		arg_ptr++; // Move and parse the next argument.
 	}
 }
 
+bool is_directory(const char *path) {
+	struct stat s;
+	if (stat(path, &s) == 0) {
+		if (s.st_mode & S_IFDIR) {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool perform_setup() {
+	// Get ready to copy the necessary files to the chosen path.
+	if (!is_directory(install_path)) {
+		fprintf(stderr, "Error: %s is not a directory.\n", install_path);
+	}
+}
+
 int main(int argc, char **argv) {
 	// Handle command line arguments
 	parse_args(argc, argv);
+	if (!perform_setup()) {
+		return 1;
+	}
 	
 	free(install_path);
 	free(config_path);
