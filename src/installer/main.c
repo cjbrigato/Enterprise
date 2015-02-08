@@ -25,6 +25,7 @@
 
 static char *install_path;
 static char *config_path;
+static char *program_name; // Stores the name the program was invoked with
 
 static bool should_verify;
 
@@ -62,7 +63,7 @@ bool handle_option(char *option, char **arg_ptr) {
 		
 		return true;
 	} else if (strcmp("--help", option) == 0) {
-		usage("install-enterprise");
+		usage(program_name);
 		exit(0);
 	}
 	
@@ -121,6 +122,7 @@ bool perform_setup() {
 
 int main(int argc, char **argv) {
 	// Handle command line arguments
+	program_name = strdup(*argv);
 	parse_args(argc, argv);
 	if (!perform_setup()) {
 		return 1;
