@@ -27,16 +27,21 @@ static char *install_path;
 static char *config_path;
 
 static bool should_verify;
+static bool should_configure = true; // Whether or not to write data to the config file
 
 void usage(char *prog_name) {
 	printf("usage: %s [--verify] [--config file] path\n", prog_name);
 	printf("\t--verify\t\tVerify that the installation is configured properly after setup\n");
+	printf("\t--blank\t\t\tWrite an empty file\n");
 	printf("\t--config file\t\tSpecifies the path to the configuration file\n");
 }
 
 bool handle_option(char *option, char **arg_ptr) {
 	if (strcmp("--verify", option) == 0) {
 		should_verify = true;
+		return true;
+	} else if (strcmp("--blank", option) == 0) {
+		should_configure = false;
 		return true;
 	} else if (strcmp("--config", option) == 0) {
 		if (*(arg_ptr + 1) != 0) {
@@ -116,7 +121,10 @@ bool perform_setup() {
 	// Get ready to copy the necessary files to the chosen path.
 	if (!is_directory(install_path)) {
 		fprintf(stderr, "Error: %s is not a directory.\n", install_path);
+		return false;
 	}
+
+	return true;
 }
 
 int main(int argc, char **argv) {
