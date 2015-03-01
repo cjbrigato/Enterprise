@@ -31,10 +31,11 @@ static bool should_verify;
 static bool should_configure = true; // Whether or not to write data to the config file
 
 void usage(char *prog_name) {
-	printf("usage: %s [--verify] [--config file] path\n", prog_name);
+	printf("usage: %s [--verify] [--help] [--config file] path\n", prog_name);
 	printf("\t--verify\t\tVerify that the installation is configured properly after setup\n");
 	printf("\t--blank\t\t\tWrite an empty file\n");
 	printf("\t--config file\t\tSpecifies the path to the configuration file\n");
+	printf("\t--help\t\tShows this help message");
 }
 
 bool handle_option(char *option, char **arg_ptr) {

@@ -26,6 +26,8 @@
 #include "distribution.h"
 
 static void ShowAboutPage(VOID);
+static CHAR16 *boot_options;
+static UINT8 distribution_id = -1;
 
 #define KEYPRESS(keys, scan, uni) ((((UINT64)keys) << 32) | ((scan) << 16) | (uni))
 #define EFI_SHIFT_STATE_VALID           0x80000000
@@ -163,7 +165,7 @@ EFI_STATUS key_read(UINT64 *key, BOOLEAN wait) {
 	return EFI_SUCCESS;
 }
 
-EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 *bootOptions) {
+EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 *bootOptions, BOOLEAN showBootOptions) {
 	EFI_STATUS err = EFI_SUCCESS;
 	
 	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.
@@ -203,15 +205,21 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 		uefi_call_wrapper(BS->Stall, 1, 3 * 1000 * 1000);
 	}
 	
-	err = BootLinuxWithOptions(bootOptions, index);
+	if (showBootOptions) {
+		// Save the selected distribution index for later.
+		distribution_id = index;
+		err = ConfigureKernel(bootOptions, preset_options_array, PRESET_OPTIONS_SIZE);
+	} else {
+		err = BootLinuxWithOptions(bootOptions, index);
+	}
+	
 	return err; // Shouldn't get here.
 }
 
 EFI_STATUS DisplayMenu(void) {
 	EFI_STATUS err;
 	UINT64 key;
-	CHAR16 *boot_options;
-	boot_options = AllocatePool(sizeof(CHAR16) * 150);
+	boot_options = AllocateZeroPool(sizeof(CHAR16) * 150);
 	
 	start:
 	
@@ -226,9 +234,9 @@ EFI_STATUS DisplayMenu(void) {
 	
 	err = key_read(&key, TRUE);
 	if (key == '1') {
-		DisplayDistributionSelector(distributionListRoot, L"");
+		DisplayDistributionSelector(distributionListRoot, L"", FALSE);
 	} else if (key == '2') {
-		ConfigureKernel(boot_options, preset_options_array, PRESET_OPTIONS_SIZE);
+		DisplayDistributionSelector(distributionListRoot, L"", TRUE);
 	} else if (key == 1507328) { // Escape key
 		ShowAboutPage();
 		uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
@@ -279,7 +287,11 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 	UINT64 key;
 	EFI_STATUS err;
 	
-	StrCpy(options, L""); // Not strictly necessary, but it doesn't hurt to be double safe.
+	StrCpy(options, L"");
+	
+	// Copy any options from the distribution's config entry into this string so
+	// we can directly pass it to the kernel.
+	StrCat(options, boot_options);
 	
 	// Copy everything from our preset options array into our options array.
 	int i;
@@ -353,7 +365,7 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		StrCat(options, L"gpt ");
 	}
 	
-	DisplayDistributionSelector(distributionListRoot, options);
+	BootLinuxWithOptions(options, distribution_id);
 	
 	// Shouldn't get here unless something went wrong with the boot process.
 	uefi_call_wrapper(BS->Stall, 1, 3 * 1000);
