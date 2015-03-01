@@ -98,11 +98,6 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 		can_continue = FALSE;
 	}
 	
-	if (!FileExists(root_dir, L"\\efi\\boot\\boot.iso")) {
-		DisplayErrorText(L"Error: can't find ISO file to boot!.\n");
-		can_continue = FALSE;
-	}
-	
 	// Check if there is a persistence file present.
 	// TODO: Support distributions other than Ubuntu.
 	if (FileExists(root_dir, L"\\casper-rw") && can_continue) {
@@ -290,6 +285,12 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->initrd_path, value);
 		} else if (strcmpa((CHAR8 *)"iso", key) == 0) {
 			strcpya(conductor->bootOption->iso_path, value);
+			
+			CHAR16 *temp = ASCIItoUTF16(value, strlena(value));
+			if (!FileExists(root_dir, temp)) {
+				Print(L"Warning: ISO file %a not found.", value);
+			}
+			FreePool(temp);
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
 			AllocateMemoryAndCopyChar8String(conductor->bootOption->boot_folder, value);
 		} else {
