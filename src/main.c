@@ -91,19 +91,18 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 		} else {
 			DisplayErrorText(L"Warning: old-style configuration file found, please upgrade to the new format");
 			ReadConfigurationFile(L"\\efi\\boot\\.MLUL-Live-USB");
-			if (!distributionListRoot) {
-				DisplayErrorText(L"Error: configuration file parsing error.\n");
-				can_continue = FALSE;
-			}
 		}
 	} else {
 		ReadConfigurationFile(L"\\efi\\boot\\enterprise.cfg");
-		if (!distributionListRoot) {
-			DisplayErrorText(L"Error: configuration file parsing error.\n");
-			can_continue = FALSE;
-		}
 	}
 	
+	// Verify if the configuration file is valid.
+	if (!distributionListRoot) {
+		DisplayErrorText(L"Error: configuration file parsing error.\n");
+		can_continue = FALSE;
+	}
+	
+	// Check for GRUB.
 	if (!FileExists(root_dir, L"\\efi\\boot\\boot.efi")) {
 		DisplayErrorText(L"Error: can't find GRUB bootloader!.\n");
 		can_continue = FALSE;
