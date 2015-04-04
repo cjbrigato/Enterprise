@@ -233,6 +233,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 	UINTN read_bytes = FileRead(root_dir, name, &contents);
 	if (read_bytes == 0) {
 		DisplayErrorText(L"Error: Couldn't read configuration information.\n");
+		return;
 	}
 	
 	UINTN position = 0;
@@ -308,6 +309,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 		}
 	}
 	
+	FreePool(contents);
 	//Print(L"Done reading configuration file.\n");
 }
 
