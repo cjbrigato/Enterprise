@@ -242,6 +242,13 @@ EFI_STATUS DisplayMenu(void) {
 		uefi_call_wrapper(ST->ConOut->ClearScreen, 1, ST->ConOut);
 		Print(banner, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH);
 		goto start;
+	} else if (key == 720896) { // F1 key
+		// Reset to use the default screen resolution. This is provided as a
+		// counter-annoyance measure for screens which are incredibly large.
+		uefi_call_wrapper(ST->ConOut->SetMode, 2, ST->ConOut, 0);
+		numberOfDisplayRows = 80;
+		numberOfDisplayColoumns = 25;
+		goto start;
 	} else {
 		// Reboot the system.
 		err = uefi_call_wrapper(RT->ResetSystem, 4, EfiResetCold, EFI_SUCCESS, 0, NULL);
@@ -269,6 +276,8 @@ static void ShowAboutPage(VOID) {
 		DisplayErrorText(L"    UEFI 2.0 not supported!\n\n");
 	}
 	
+	Print(L"    Using a screen resolution of %d x %d, mode %d.\n",
+		numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable);
 	Print(L"    Press any key to go back.");
 	UINT64 key;
 	key_read(&key, TRUE);
