@@ -131,14 +131,14 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 
 static EFI_STATUS SetupDisplay(VOID) {
 	// Set the display to use the highest available resolution.
-	EFI_STATUS err;
+	EFI_STATUS err = EFI_SUCCESS;
 	
-	do {
+	while (!EFI_ERROR(err)) {
 		err = uefi_call_wrapper(ST->ConOut->QueryMode, 4, ST->ConOut, highestModeNumberAvailable, &numberOfDisplayRows, &numberOfDisplayColoumns);
 		Print(L"Detected mode %d: %d x %d.\n", highestModeNumberAvailable, numberOfDisplayRows, numberOfDisplayColoumns);
 		
-		highestModeNumberAvailable++;
-	} while (err == EFI_SUCCESS);
+		if (!EFI_ERROR(err)) highestModeNumberAvailable++;
+	}
 	
 	Print(L"Setting display to be in mode %d.\n", highestModeNumberAvailable - 1);
 	err = uefi_call_wrapper(ST->ConOut->SetMode, 2, ST->ConOut, highestModeNumberAvailable - 1);
@@ -282,10 +282,10 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 				conductor->bootOption->kernel_path = NULL;
 				
 				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos);
-				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos);
+				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos - 1); // Don't include the space character in the kernel path
 				//Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
 				
-				CHAR8 *params = value + spaceCharPos + 1;
+				CHAR8 *params = value + spaceCharPos + 1; // Start the copy just past the space character
 				AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_options, params);
 				//Print(L"conductor->bootOption->kernel_options = %a\n", conductor->bootOption->kernel_options);
 			} else {
