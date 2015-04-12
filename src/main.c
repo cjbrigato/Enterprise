@@ -89,7 +89,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 			DisplayErrorText(L"Error: can't find configuration file.\n");
 			can_continue = FALSE;
 		} else {
-			DisplayErrorText(L"Warning: old-style configuration file found, please upgrade to the new format");
+			DisplayErrorText(L"Warning: old-style configuration file found, please upgrade to the new format\n");
 			ReadConfigurationFile(L"\\efi\\boot\\.MLUL-Live-USB");
 		}
 	} else {
@@ -299,7 +299,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			
 			CHAR16 *temp = ASCIItoUTF16(value, strlena(value));
 			if (!FileExists(root_dir, temp)) {
-				Print(L"Warning: ISO file %a not found.", value);
+				Print(L"Warning: ISO file %a not found.\n", value);
 			}
 			FreePool(temp);
 		} else if (strcmpa((CHAR8 *)"root", key) == 0) {
