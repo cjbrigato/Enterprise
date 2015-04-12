@@ -248,6 +248,7 @@ EFI_STATUS DisplayMenu(void) {
 		uefi_call_wrapper(ST->ConOut->SetMode, 2, ST->ConOut, 0);
 		numberOfDisplayRows = 80;
 		numberOfDisplayColoumns = 25;
+		uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE);
 		goto start;
 	} else {
 		// Reboot the system.
