@@ -282,7 +282,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 				if (conductor->bootOption->kernel_path) FreePool(conductor->bootOption->kernel_path);
 				conductor->bootOption->kernel_path = NULL;
 				
-				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos);
+				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos + 1);
 				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos - 1); // Don't include the space character in the kernel path
 				//Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
 				
