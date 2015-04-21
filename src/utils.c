@@ -113,7 +113,7 @@ EFI_STATUS ReadStringFromKeyboard(OUT CHAR16 **outString) {
 		if (charactersEntered == inputLength - 1) break;
 	}
 	
-	StrCat(*outString, L" ");
+	if (StrLen(*outString) > 0) StrCat(*outString, L" ");
 	Print(L"\n");
 	return err;
 }
