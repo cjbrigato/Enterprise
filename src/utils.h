@@ -41,5 +41,6 @@ UINTN FileRead(EFI_FILE_HANDLE, const CHAR16 *, CHAR8 **);
 CHAR8* GetConfigurationKeyAndValue(CHAR8 *, UINTN *, CHAR8 **, CHAR8 **);
 VOID DisplayColoredText(CHAR16 *);
 VOID DisplayErrorText(CHAR16 *);
+EFI_STATUS ReadStringFromKeyboard(OUT CHAR16 **);
 
 #endif

@@ -329,6 +329,9 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		OPTION(L"\n    7) debug - Enable kernel debugging.", 6);
 		OPTION(L"\n    8) gpt - Forces disk with valid GPT signature but invalid Protective MBR" \
 				" to be treated as GPT (useful for installing Linux on a Mac drive).", 7);
+		Print(L"\n    9) Custom...");
+		if (StrLen(options) > 0) Print(L" %s", options);
+
 		Print(L"\n\n    0) Boot with selected options.\n");
 		
 		err = key_read(&key, TRUE);
@@ -339,6 +342,21 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_op
 		
 		UINT64 index = key - '0';
 		options_array[index - 1] = !options_array[index - 1];
+		
+		// Allow the user to enter their own kernel parameter if they wish.
+		if (index == 9) {
+			uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, numberOfDisplayRows - 1);
+			uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, TRUE);
+			Print(L"> ");
+			
+			CHAR16 *input = NULL;
+			EFI_STATUS err = ReadStringFromKeyboard(&input);
+			if (!EFI_ERROR(err)) StrCat(options, input);
+			FreePool(input);
+			
+			uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, 0);
+			uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE);
+		}
 	} while(key != '0');
 	
 	// Now concatenate the individual options onto the option line.
