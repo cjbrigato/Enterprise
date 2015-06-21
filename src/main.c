@@ -249,7 +249,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 			new->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
 			AllocateMemoryAndCopyChar8String(new->bootOption->name, value);
 			AllocateMemoryAndCopyChar8String(new->bootOption->iso_path, (CHAR8 *)"boot.iso"); // Set a default value.
-				
+			
 			conductor->next = new;
 			new->next = NULL;
 			conductor = conductor->next; // subsequent operations affect the new link in the chain
@@ -283,7 +283,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 				conductor->bootOption->kernel_path = NULL;
 				
 				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos + 1);
-				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos - 1); // Don't include the space character in the kernel path
+				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos);
 				//Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
 				
 				CHAR8 *params = value + spaceCharPos + 1; // Start the copy just past the space character
