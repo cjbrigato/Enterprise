@@ -122,12 +122,7 @@ EFI_STATUS ReadStringFromKeyboard(OUT CHAR16 **outString) {
 	#pragma mark - Character conversion functions missing from GNU-EFI
 #endif
 CHAR8* strcpya(CHAR8 *target, const CHAR8 *source) {
-	int i;
-
-	for (i = 0; source[i] != '\0'; ++i)
-		target[i] = source[i];
-	target[i] = source[i];
-
+	while ((*target++ = *source++));
 	return target;
 }
 
