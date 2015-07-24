@@ -127,16 +127,18 @@ CHAR8* strcpya(CHAR8 *target, const CHAR8 *source) {
 }
 
 CHAR8* strncpya(CHAR8 *target, const CHAR8 *source, INTN n) {
-	CHAR8 *dst = target;
-	const CHAR8 *src = source;
-	while (n > 0) {
-		n--;
-		if ((*dst++ = *src++) == '\0') {
-			SetMem(dst, n, '\0');
-			break;
-		}
+	INTN i = 0;
+
+	// Copy all of the characters in the string up to the desired length.
+	for (i = 0; i < n && source[i] != '\0'; i++) {
+		target[i] = source[i];
 	}
-	
+
+	// Pad the remainder of the string with null characters per the standard.
+	for ( ; i < n; i++) {
+		target[i] = '\0';
+	}
+
 	return target;
 }
 
