@@ -33,7 +33,7 @@
 
 #define AllocateMemoryAndCopyChar8String(dest, src) \
 	if (dest) FreePool(dest); dest = NULL; \
-	dest = AllocatePool(sizeof(CHAR8) * strlena(src) + 1); \
+	dest = AllocatePool(sizeof(CHAR8) * (strlena(src) + 1)); \
 	strcpya(dest, src); \
 
 typedef struct LinuxBootOption {

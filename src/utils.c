@@ -124,7 +124,7 @@ EFI_STATUS ReadStringFromKeyboard(OUT CHAR16 **outString) {
 CHAR8* strcpya(CHAR8 *target, const CHAR8 *source) {
 	int i;
 
-	for(i = 0; source[i] != '\0'; ++i)
+	for (i = 0; source[i] != '\0'; ++i)
 		target[i] = source[i];
 	target[i] = source[i];
 
