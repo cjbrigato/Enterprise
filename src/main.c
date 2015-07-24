@@ -275,17 +275,24 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 		// The user is manually specifying information; override any previous values.
 		} else if (strcmpa((CHAR8 *)"kernel", key) == 0) {
 			if (strposa(value, ' ') != -1) {
-				// There's a space after the kernel name; the user has given us additional kernel parameters.
-				// Separate the kernel path and options and copy them into their respective positions in the
-				// boot options struct.
+				/*
+				 * There's a space after the kernel name; the user has given us additional kernel parameters.
+				 * Separate the kernel path and options and copy them into their respective positions in the
+				 * boot options struct.
+				 */
+				 // Initialize variables and free memory that we might be overwriting soon.
 				INTN spaceCharPos = strposa(value, ' ');
+				INTN kernelStringLength = sizeof(CHAR8) * spaceCharPos;
 				if (conductor->bootOption->kernel_path) FreePool(conductor->bootOption->kernel_path);
 				conductor->bootOption->kernel_path = NULL;
-				
-				conductor->bootOption->kernel_path = AllocatePool(sizeof(CHAR8) * spaceCharPos + 1);
+
+				// Allocate memory and begin the copy.
+				conductor->bootOption->kernel_path = AllocatePool(kernelStringLength + 1); // +1 is for null terminator
 				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos);
+				*(conductor->bootOption->kernel_path + kernelStringLength) = '\0';
 				//Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
-				
+
+				// Begin dealing with the kernel parameters and copy them too.
 				CHAR8 *params = value + spaceCharPos + 1; // Start the copy just past the space character
 				AllocateMemoryAndCopyChar8String(conductor->bootOption->kernel_options, params);
 				//Print(L"conductor->bootOption->kernel_options = %a\n", conductor->bootOption->kernel_options);
