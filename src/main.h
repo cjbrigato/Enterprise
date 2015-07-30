@@ -29,7 +29,7 @@
 #define banner L"Welcome to Enterprise! - Version %d.%d.%d\n"
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 3
-#define VERSION_PATCH 0
+#define VERSION_PATCH 1
 
 #define AllocateMemoryAndCopyChar8String(dest, src) \
 	if (dest) FreePool(dest); dest = NULL; \
