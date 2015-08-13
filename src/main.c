@@ -33,6 +33,7 @@ static void ReadConfigurationFile(const CHAR16 *);
 static EFI_STATUS console_text_mode(VOID);
 static EFI_STATUS SetupDisplay(VOID);
 UINTN numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable = 0;
+CHAR16 *banner = L"Welcome to Enterprise! - Version %d.%d.%d\n";
 
 EFI_LOADED_IMAGE *this_image = NULL;
 static EFI_FILE *root_dir;

@@ -26,7 +26,7 @@
 #define EFI_1_10_SYSTEM_TABLE_REVISION ((1<<16) | (10))
 #define EFI_1_02_SYSTEM_TABLE_REVISION ((1<<16) | (02))
 
-#define banner L"Welcome to Enterprise! - Version %d.%d.%d\n"
+extern CHAR16 *banner;
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 3
 #define VERSION_PATCH 1
