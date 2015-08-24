@@ -48,8 +48,8 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	
 	InitializeLib(image_handle, systab); // Initialize EFI.
 	console_text_mode(); // Put the console into text mode. If we don't do that, the image of the Apple
-						// boot manager will remain on the screen and the user won't see any output
-						// from the program.
+	                     // boot manager will remain on the screen and the user won't see any output
+	                     // from the program.
 	SetupDisplay();
 	global_image = image_handle;
 	
