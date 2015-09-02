@@ -293,7 +293,7 @@ static int options_array[20];
 		Print(string); \
 	}
 
-EFI_STATUS ConfigureKernel(CHAR16 *options, bool preset_options[], int preset_options_length) {
+EFI_STATUS ConfigureKernel(CHAR16 *options, BOOLEAN preset_options[], int preset_options_length) {
 	UINT64 key;
 	EFI_STATUS err;
 	

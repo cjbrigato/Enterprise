@@ -69,7 +69,7 @@ EFI_STATUS efi_main(EFI_HANDLE image_handle, EFI_SYSTEM_TABLE *systab) {
 	
 	/* Setup global variables. */
 	// Set all present options to be false (i.e off).
-	SetMem(preset_options_array, PRESET_OPTIONS_SIZE * sizeof(bool), 0);
+	SetMem(preset_options_array, PRESET_OPTIONS_SIZE * sizeof(BOOLEAN), 0);
 	
 	/* Print the welcome message. */
 	uefi_call_wrapper(ST->ConOut->SetAttribute, 2, ST->ConOut, EFI_LIGHTGRAY|EFI_BACKGROUND_BLACK); // Set the text color.

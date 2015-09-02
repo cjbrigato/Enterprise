@@ -26,6 +26,8 @@
 #define EFI_1_10_SYSTEM_TABLE_REVISION ((1<<16) | (10))
 #define EFI_1_02_SYSTEM_TABLE_REVISION ((1<<16) | (02))
 
+#define PRESET_OPTIONS_SIZE 20
+
 extern CHAR16 *banner;
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 3
@@ -58,6 +60,7 @@ extern const EFI_GUID enterprise_variable_guid;
 extern const EFI_GUID grub_variable_guid;
 
 extern UINTN numberOfDisplayRows, numberOfDisplayColoumns, highestModeNumberAvailable;
+extern BOOLEAN preset_options_array[PRESET_OPTIONS_SIZE];
 
 extern BootableLinuxDistro *distributionListRoot;
 
