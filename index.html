@@ -43,7 +43,7 @@
 		<div class="sixteen columns">
 			<h1 class="remove-bottom" style="margin-top: 40px">Enterprise</h1>
 
-			<h5>An EFI Linux Loader for UEFI Macs</h5>
+			<h5>An EFI Linux Loader for UEFI PCs and Macs</h5>
 			<hr>
 		</div>
 
@@ -104,12 +104,12 @@
 
 				<p>Enterprise (named after the Starship Enterprise from <i>Star
 				Trek</i>) is an EFI program that is designed to assist in booting Linux
-				distributions from USB sticks on Intel Macs, something that is
-				continously regarded as being near to impossible due to quirks in Apple's
-				EFI implementation and really quite poor support from Linux
+				distributions from USB sticks on UEFI-based PCs and Macs, something that is
+				continously regarded as being near to impossible due to quirks in vendors'
+				EFI implementations and really quite poor support from Linux
 				distributions. Using Enterprise, you can create bootable USB drives
-				that boot on your Mac <strong>without</strong> needing rEFIt or
-				rEFInd to be installed.</p>
+				that boot on a UEFI-based computer <strong>without</strong> needing
+				rEFIt or rEFInd to be installed.</p>
 
 				<p>The program is quite unique. It is written in C, and can be compiled
 				to run on both 32-bit and 64-bit EFI firmware types. Right now, all
@@ -117,10 +117,10 @@
 				only. Be aware that certain 64-bit Macs have 32-bit EFI firmwares, and
 				the supplied Enterprise binaries won't work on these platforms.</p>
 
-				<p>Enterprise is designed to compliment <a href=
+				<p>Enterprise was originally designed to compliment <a href=
 				"https://sevenbits.github.io/Mac-Linux-USB-Loader/" target="_blank">Mac
-				Linux USB Loader</a>, though it can also be used separately (albeit with
-				some setup work). The purpose of Enterprise is as the first stage in a
+				Linux USB Loader</a>, though it can also be used separately on any UEFI-based
+				computer. The purpose of Enterprise is as the first stage in a
 				two-stage booting process for Mac Linux USB Loader-created USB
 				drives.</p>
 
@@ -144,15 +144,15 @@
 
 				<h4>Installation and Use</h4>
 
-				<p>Enterprise is intended as a tool to be used alongside Mac Linux USB
-				Loader, and so it is not really intended to be installed in the same
-				manner as one would install a traditional bootloader like GRUB. That
-				being said, it is possible to use Enterprise without Mac Linux USB
-				Loader, as they are wholly separate tools, however in this circumstance
-				additional setup is required.</p>
+				<p>Enterprise is not really intended to be installed in the same
+				manner as one would install a traditional bootloader like GRUB. Owing to
+				its origins and nature, Enterprise is fairly easy to configure and doesn't
+				require writing anything to the Master Boot Record of a hard drive, and it
+				only consists of a few files which can be trivially copied in any sane
+				operating system.</p>
 
-				<p>To get the best performance from Enterprise, and to take advantage of
-				any super cool stuff I add to it, you should
+				<p>If you want to get the best performance from Enterprise and take advantage
+				of any super cool stuff I add to it, you should
 				<a href="https://github.com/SevenBits/Enterprise/archive/master.zip">download the
 				source code</a>, as the official repository includes a number of tools
 				to assist in setup.</p>
@@ -160,24 +160,31 @@
 				<p>However, for beginners and casual users, you should begin by
 				downloading the Enterprise binaries. You can do that at the pane to the
 				left. Then you need to set up a configuration file on your USB drive
-				under the EFI/BOOT directory (which should be created if it doesn't
-				exist) named <code>enterprise.cfg</code> which tells Enterprise details about
+				named <code>enterprise.cfg</code> which tells Enterprise details about
 				the distribution that you want to boot from your USB drive. Here's a
 				sample file:</p>
 				<script src="https://gist.github.com/SevenBits/466f078ac3dfbd028a4b.js"
 				type="text/javascript">
 </script>
 
-				<p>At the very minimum, you need <em>at least</em> the
-				<code>family</code> parameter. This tells Enterprise which distribution
-				you are trying to boot and loads default options based on this. All of
-				these default options can be overwritten. The default options for each
-				parameter are:</p>
+				<p>In order to function properly, Enterprise needs to know the location
+				of the Linux kernel and the initial RAM disc inside of the ISO file. The
+				configuration file gives this information to Enterprise, which then passes
+				this information along to the boot loader when it is time to load the
+				operating system.</p>
+
+				<p>The configuration file consists of a number of <code>entry</code>s, each
+				of which defines a particular distribution or option which you want to
+				have. At the very minimum, each <code>entry</code> should contain <em>at
+				least</em> the <code>family</code> parameter. This tells Enterprise which
+				distribution you are trying to boot and loads default options based on
+				this. All of these default options can be overwritten. Currently, the
+				options accepted by the <code>family</code> parameter are:</p>
 
 				<table>
 					<thead>
 						<tr>
-							<th>Distribution</th>
+							<th>Distribution Family</th>
 
 							<th>Default Values</th>
 						</tr>
@@ -187,15 +194,15 @@
 						<tr>
 							<td>Ubuntu</td>
 
-							<td><strong>kernel:</strong> /casper/vmlinuz
-							<strong>initrd:</strong> /casper/initrd.lz</td>
+							<td><strong>kernel:</strong> <code>/casper/vmlinuz</code>
+							<strong>initrd:</strong> <code>/casper/initrd.lz</code></td>
 						</tr>
 
 						<tr>
 							<td>Debian</td>
 
-							<td><strong>kernel:</strong> /live/vmlinuz
-							<strong>initrd:</strong> /live/initrd.img</td>
+							<td><strong>kernel:</strong> <code>/live/vmlinuz</code>
+							<strong>initrd:</strong> <code>/live/initrd.img</code></td>
 						</tr>
 					</tbody>
 				</table>
