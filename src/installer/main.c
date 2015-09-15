@@ -23,32 +23,50 @@
 
 #include <sys/stat.h>
 
-static char *install_path;
-static char *config_path;
-static char *program_name; // Stores the name the program was invoked with
+static char *install_path = NULL;
+static char *config_path = NULL;
+static char *program_name = NULL; // Stores the name the program was invoked with
+
+// The locations that we search for in looking for the
+// Enterprise files (i.e those ending in *.efi)
+// Should end with NULL
+static const char *search_paths[6] = {"/etc/enterprise-efi/resources/", "/etc/opt/enterprise-efi/resources/", "/usr/share/enterprise-efi/resources/", "resources/", "", NULL};
 
 static bool should_verify;
 static bool should_configure = true; // Whether or not to write data to the config file
 
-void usage(char *prog_name) {
-	printf("usage: %s [--verify] [--help] [--config file] path\n", prog_name);
+static void usage(char *prog_name) {
+	printf("usage: %s [--verify] [--help] [--blank | --config file] path\n", prog_name);
 	printf("\t--verify\t\tVerify that the installation is configured properly after setup\n");
-	printf("\t--blank\t\t\tWrite an empty file\n");
+	printf("\t--blank\t\t\tWrite an empty configuration file\n");
 	printf("\t--config file\t\tSpecifies the path to the configuration file\n");
-	printf("\t--help\t\tShows this help message");
+	printf("\t--help\t\tShows this help message\n");
 }
 
-bool handle_option(char *option, char **arg_ptr) {
+static bool handle_option(char *option, char **arg_ptr) {
 	if (strcmp("--verify", option) == 0) {
 		should_verify = true;
 		return true;
 	} else if (strcmp("--blank", option) == 0) {
+		if (config_path) {
+			fprintf(stderr, "Error: --blank and --config are mutually exclusive.\n");
+			usage(program_name);
+			exit(1);
+		}
+
 		should_configure = false;
 		return true;
 	} else if (strcmp("--config", option) == 0) {
 		if (*(arg_ptr + 1) != 0) {
 			if (**(arg_ptr + 1) == '-') {
 				fprintf(stderr, "Error: --config expects argument\n");
+				usage(program_name);
+				exit(1);
+			}
+			
+			if (!should_configure) {
+				fprintf(stderr, "Error: --blank and --config are mutually exclusive.\n");
+				usage(program_name);
 				exit(1);
 			}
 			
@@ -64,6 +82,7 @@ bool handle_option(char *option, char **arg_ptr) {
 			arg_ptr++;
 		} else {
 			fprintf(stderr, "Error: --config expects argument\n");
+			usage(program_name);
 			exit(1);
 		}
 		
@@ -76,19 +95,19 @@ bool handle_option(char *option, char **arg_ptr) {
 	return false;
 }
 
-void parse_args(int argc, char **argv) {
+static void parse_args(int argc, char **argv) {
 	if (argc < 2) {
 		usage(*argv);
 		exit(1);
 	}
 	
-	char **arg_ptr = argv;
+	char **arg_ptr = argv + 1;
 	while (arg_ptr != argv + argc) {
 		if (**arg_ptr == '-') {
 			// Parse an option.
 			bool result = handle_option(*arg_ptr, arg_ptr);
 			if (!result) {
-				fprintf(stderr, "Error: unrecognized option: %s\n", *arg_ptr);
+				fprintf(stderr, "Error: unrecognized option: %s. Aborting.\n", *arg_ptr);
 				exit(1);
 			}
 		} else {
@@ -97,18 +116,18 @@ void parse_args(int argc, char **argv) {
 			
 			install_path = malloc(sizeof(char) * strlen(*arg_ptr));
 			if (!install_path) {
-				fprintf(stderr, "Error: failed to allocate memory\n");
+				fprintf(stderr, "Error: failed to allocate memory. Aborting.\n");
 				exit(1);
 			}
 			
-			strcpy(install_path, *arg_ptr);
+			if (strlen(*arg_ptr) > 0) strcpy(install_path, *arg_ptr);
 		}
 		
 		arg_ptr++; // Move and parse the next argument.
 	}
 }
 
-bool is_directory(const char *path) {
+static bool is_directory(const char *path) {
 	struct stat s;
 	if (stat(path, &s) == 0) {
 		if (s.st_mode & S_IFDIR) {
@@ -119,14 +138,75 @@ bool is_directory(const char *path) {
 	return false;
 }
 
-bool perform_setup() {
+static const char* check_search_path(void) {
+	// Try each listing in the list of potential Enterprises sources
+	// to find one with the valid files.
+	const char **needle = search_paths;
+	while (*needle) {
+		bool found = false;
+		char *desired_file_name = "bootX64.efi";
+
+		char *tmp = malloc(strlen(*needle) + strlen(desired_file_name) + 1);
+		strcat(tmp, *needle);
+		strcat(tmp, desired_file_name);
+
+		FILE *fp;
+		if ((fp = fopen(tmp, "rb"))) {
+			found = true;
+			fclose(fp);
+		}
+
+		free(tmp);
+		if (!found) needle++;
+		else return *needle;
+	}
+	
+	return NULL;
+}
+
+static bool perform_setup(void) {
 	// Get ready to copy the necessary files to the chosen path.
+	if (!install_path) {
+		usage(program_name);
+		exit(1);
+	}
+
 	if (!is_directory(install_path)) {
-		fprintf(stderr, "Error: %s is not a directory.\n", install_path);
+		fprintf(stderr, "Error: %s is not a directory. Aborting.\n", install_path);
 		return false;
+	}
+	
+	const char *support_path = check_search_path();
+	if (!support_path) {
+		fprintf(stderr, "Error: can't find required support files. Aborting.\n");
+		return false;
+	}
+	
+	// Write the configuration file (if desired)
+	const char *configuration_file_name = "enterprise.cfg";
+	char *full_config_path = malloc(strlen(install_path) + strlen(configuration_file_name) + 1);
+	if (!full_config_path) goto no_memory;
+	
+	strcpy(full_config_path, install_path);
+	strcat(full_config_path, configuration_file_name);
+	printf("%s\n", full_config_path);
+
+	if (!should_configure) {
+		FILE *fp = fopen(full_config_path, "w");
+		if (fp) fclose(fp);
+		else goto no_config_written;
+	} else {
+		// TODO: Write configuration file
 	}
 
 	return true;
+	
+no_memory:
+	fprintf(stderr, "Error: failed to allocate memory. Aborting.\n");
+	return false;
+no_config_written:
+	fprintf(stderr, "Error: failed to write configuration file. Aborting.\n");
+	return false;
 }
 
 int main(int argc, char **argv) {
@@ -139,4 +219,5 @@ int main(int argc, char **argv) {
 	
 	free(install_path);
 	free(config_path);
+	free(program_name);
 }
