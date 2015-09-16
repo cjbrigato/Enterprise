@@ -91,7 +91,7 @@ EFI_STATUS ReadStringFromKeyboard(OUT CHAR16 **outString) {
 	EFI_STATUS err = EFI_SUCCESS;
 	const UINT32 inputLength = 1024;
 	UINT32 charactersEntered = 0;
-	*outString = AllocateZeroPool(sizeof(CHAR16) * inputLength + 1);
+	*outString = AllocateZeroPool(sizeof(CHAR16) * (inputLength + 1));
 	
 	CHAR16 key = 0;
 	while (key != 13) {
@@ -110,7 +110,7 @@ EFI_STATUS ReadStringFromKeyboard(OUT CHAR16 **outString) {
 		}
 		
 		// The user can't overflow the input buffer.
-		if (charactersEntered == inputLength - 1) break;
+		if (charactersEntered == inputLength) break;
 	}
 	
 	if (StrLen(*outString) > 0) StrCat(*outString, L" ");
