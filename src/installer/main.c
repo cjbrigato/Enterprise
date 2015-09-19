@@ -166,6 +166,45 @@ static const char* check_search_path(void) {
 	return NULL;
 }
 
+static bool copy_configuration_file(const const char *destination) __attribute__((nonnull));
+static bool copy_configuration_file(const const char *destination) {
+	if (!config_path && should_configure) {
+		fprintf(stderr, "Error: pointer to configuration file path is NULL!");
+		return false;
+	}
+	
+	char *buffer;
+	FILE *inFilePointer = fopen(config_path, "r");
+	FILE *outFilePointer = fopen(destination, "w");
+	
+	fseek(inFilePointer, 0, SEEK_END);
+	long fsize = ftell(inFilePointer);
+	rewind(inFilePointer);
+	
+	buffer = malloc(fsize + 1);
+	if (!buffer) goto no_memory;
+	fread(buffer, fsize, 1, inFilePointer);
+	fclose(inFilePointer);
+	
+	*(buffer + fsize) = 0;
+	
+	if (fwrite(buffer, sizeof(char), sizeof(buffer), outFilePointer) != fsize)
+		goto write_failed;
+
+	fclose(outFilePointer);
+	return true;
+
+no_memory:
+	fprintf(stderr, "Error: failed to allocate memory. Aborting.\n");
+	fclose(outFilePointer);
+	return false;
+
+write_failed:
+	fprintf(stderr, "Error: failed to write configuration file. Aborting.\n");
+	fclose(outFilePointer);
+	return false;
+}
+
 static bool perform_setup(void) {
 	// Get ready to copy the necessary files to the chosen path.
 	if (!install_path) {
@@ -198,7 +237,7 @@ static bool perform_setup(void) {
 		if (fp) fclose(fp);
 		else goto no_config_written;
 	} else {
-		// TODO: Write configuration file
+		if (!copy_configuration_file(config_path)) return false;
 	}
 
 	return true;
