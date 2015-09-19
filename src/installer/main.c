@@ -223,6 +223,19 @@ static bool perform_setup(void) {
 		return false;
 	}
 	
+	// If install_path doesn't end with a / character, bad things will happen.
+	// Therefore, we need to add one if that's the case.
+	{
+		int len = strlen(install_path);
+		if (*(install_path + len - 1) != '/') {
+			void *temp = realloc(install_path, len + 2);
+			if (temp) {
+				install_path = temp;
+				*(install_path + len) = '/';
+			} else goto no_memory;
+		}
+	}
+	
 	// Write the configuration file (if desired)
 	const char *configuration_file_name = "enterprise.cfg";
 	char *full_config_path = malloc(strlen(install_path) + strlen(configuration_file_name) + 1);
