@@ -174,8 +174,8 @@ static bool copy_configuration_file(const const char *destination) {
 	}
 	
 	char *buffer;
-	FILE *inFilePointer = fopen(config_path, "r");
-	FILE *outFilePointer = fopen(destination, "w");
+	FILE *inFilePointer = fopen(config_path, "rb");
+	FILE *outFilePointer = fopen(destination, "wb");
 	
 	fseek(inFilePointer, 0, SEEK_END);
 	long fsize = ftell(inFilePointer);
@@ -188,10 +188,11 @@ static bool copy_configuration_file(const const char *destination) {
 	
 	*(buffer + fsize) = 0;
 	
-	if (fwrite(buffer, sizeof(char), sizeof(buffer), outFilePointer) != fsize)
+	if (fwrite(buffer, sizeof(char), fsize, outFilePointer) != fsize)
 		goto write_failed;
 
 	fclose(outFilePointer);
+	free(buffer);
 	return true;
 
 no_memory:
@@ -200,7 +201,7 @@ no_memory:
 	return false;
 
 write_failed:
-	fprintf(stderr, "Error: failed to write configuration file. Aborting.\n");
+	fprintf(stderr, "Error: failed to copy configuration file. Aborting.\n");
 	fclose(outFilePointer);
 	return false;
 }
@@ -243,14 +244,14 @@ static bool perform_setup(void) {
 	
 	strcpy(full_config_path, install_path);
 	strcat(full_config_path, configuration_file_name);
-	printf("%s\n", full_config_path);
+	printf("%s, should_configure = %s\n", full_config_path, should_configure ? "true" : "false");
 
 	if (!should_configure) {
 		FILE *fp = fopen(full_config_path, "w");
 		if (fp) fclose(fp);
 		else goto no_config_written;
 	} else {
-		if (!copy_configuration_file(config_path)) return false;
+		if (!copy_configuration_file(full_config_path)) return false;
 	}
 
 	return true;
