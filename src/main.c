@@ -279,7 +279,7 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 				 * Separate the kernel path and options and copy them into their respective positions in the
 				 * boot options struct.
 				 */
-				 // Initialize variables and free memory that we might be overwriting soon.
+				// Initialize variables and free memory that we might be overwriting soon.
 				INTN spaceCharPos = strposa(value, ' ');
 				INTN kernelStringLength = sizeof(CHAR8) * spaceCharPos;
 				if (conductor->bootOption->kernel_path) FreePool(conductor->bootOption->kernel_path);

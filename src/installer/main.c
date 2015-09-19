@@ -37,10 +37,12 @@ static bool should_configure = true; // Whether or not to write data to the conf
 
 static void usage(char *prog_name) {
 	printf("usage: %s [--verify] [--help] [--blank | --config file] path\n", prog_name);
-	printf("\t--verify\t\tVerify that the installation is configured properly after setup\n");
-	printf("\t--blank\t\t\tWrite an empty configuration file\n");
-	printf("\t--config file\t\tSpecifies the path to the configuration file\n");
+	printf("\t--verify\tVerify that the installation is configured properly after setup\n");
+	printf("\t--blank\t\tWrite an empty configuration file\n");
+	printf("\t--config file\tSpecifies the path to the configuration file\n");
 	printf("\t--help\t\tShows this help message\n");
+	printf("\tpath\t\tThe path to the mount point of the volume on which to install Enterprise\n");
+	printf("NOTE: you must specify either --blank or --config.\n");
 }
 
 static bool handle_option(char *option, char **arg_ptr) {
@@ -85,7 +87,7 @@ static bool handle_option(char *option, char **arg_ptr) {
 			usage(program_name);
 			exit(1);
 		}
-		
+
 		return true;
 	} else if (strcmp("--help", option) == 0) {
 		usage(program_name);
