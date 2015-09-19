@@ -166,15 +166,10 @@ static const char* check_search_path(void) {
 	return NULL;
 }
 
-static bool copy_configuration_file(const const char *destination) __attribute__((nonnull));
-static bool copy_configuration_file(const const char *destination) {
-	if (!config_path && should_configure) {
-		fprintf(stderr, "Error: pointer to configuration file path is NULL!");
-		return false;
-	}
-	
+static bool copy_file(const const char*, const const char*) __attribute__((nonnull (1,2)));
+static bool copy_file(const const char *source, const const char *destination) {
 	char *buffer;
-	FILE *inFilePointer = fopen(config_path, "rb");
+	FILE *inFilePointer = fopen(source, "rb");
 	FILE *outFilePointer = fopen(destination, "wb");
 	
 	fseek(inFilePointer, 0, SEEK_END);
@@ -201,7 +196,7 @@ no_memory:
 	return false;
 
 write_failed:
-	fprintf(stderr, "Error: failed to copy configuration file. Aborting.\n");
+	fprintf(stderr, "Error: failed to copy %s. Aborting.\n", source);
 	fclose(outFilePointer);
 	return false;
 }
@@ -251,7 +246,7 @@ static bool perform_setup(void) {
 		if (fp) fclose(fp);
 		else goto no_config_written;
 	} else {
-		if (!copy_configuration_file(full_config_path)) return false;
+		if (!copy_file(config_path, full_config_path)) return false;
 	}
 
 	return true;
