@@ -149,7 +149,7 @@ static const char* check_search_path(void) {
 		char *desired_file_name = "bootX64.efi";
 
 		char *tmp = malloc(strlen(*needle) + strlen(desired_file_name) + 1);
-		strcat(tmp, *needle);
+		strcpy(tmp, *needle);
 		strcat(tmp, desired_file_name);
 
 		FILE *fp;
