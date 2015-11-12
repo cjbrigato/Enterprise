@@ -182,11 +182,10 @@ EFI_STATUS DisplayDistributionSelector(struct BootableLinuxDistro *root, CHAR16 
 	INTN iteratorIndex = 0;
 	while (conductor != NULL) {
 		if (conductor->bootOption->name) {
-			Print(L"    %d) %a\n", (iteratorIndex + 1), conductor->bootOption->name);
+			Print(L"    %d) %a\n", ++iteratorIndex, conductor->bootOption->name);
 		}
 		
 		conductor = conductor->next;
-		iteratorIndex++;
 	}
 	Print(L"\n    Press any other key to reboot the system.\n");
 	
