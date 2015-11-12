@@ -333,7 +333,7 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, BOOLEAN preset_options[], int preset
 		OPTION(L"\n    7) debug - Enable kernel debugging.", 6);
 		OPTION(L"\n    8) gpt - Forces disk with valid GPT signature but invalid Protective MBR" \
 				" to be treated as GPT (useful for installing Linux on a Mac drive).", 7);
-		Print(L"\n    9) Custom...");
+		OPTION(L"\n    9) Custom...", 8);
 		if (StrLen(options) > 0) Print(L" %s", options);
 
 		Print(L"\n\n    0) Boot with selected options.\n");
@@ -345,21 +345,30 @@ EFI_STATUS ConfigureKernel(CHAR16 *options, BOOLEAN preset_options[], int preset
 		}
 		
 		UINT64 index = key - '0';
-		options_array[index - 1] = !options_array[index - 1];
 		
 		// Allow the user to enter their own kernel parameter if they wish.
+		// We only modify options_array if they selected an actual option that can be
+		// toggled, and not if option 9 is selected. Option 9 should only be
+		// highlighted if the user selects something.
 		if (index == 9) {
 			uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, numberOfDisplayRows - 1);
 			uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, TRUE);
 			Print(L"> ");
-			
+
 			CHAR16 *input = NULL;
 			EFI_STATUS err = ReadStringFromKeyboard(&input);
 			if (!EFI_ERROR(err)) StrCat(options, input);
 			FreePool(input);
-			
+
 			uefi_call_wrapper(ST->ConOut->SetCursorPosition, 2, 0, 0);
 			uefi_call_wrapper(ST->ConOut->EnableCursor, 2, ST->ConOut, FALSE);
+
+			// Highlight the ninth option if the user has entered an option.
+			if (StrLen(input) > 0) {
+				options_array[8] = TRUE;
+			}
+		} else {
+			options_array[index - 1] = !options_array[index - 1];
 		}
 	} while(key != '0');
 	
