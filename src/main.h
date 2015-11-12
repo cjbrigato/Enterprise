@@ -36,6 +36,11 @@ extern CHAR16 *banner;
 #define AllocateMemoryAndCopyChar8String(dest, src) \
 	if (dest) FreePool(dest); dest = NULL; \
 	dest = AllocatePool(sizeof(CHAR8) * (strlena(src) + 1)); \
+	if (!dest) {\
+		DisplayErrorText(L"Unable to allocate memory."); \
+		Print(L" %s %d", __FILE__, __LINE__); \
+		return; \
+	} \
 	strcpya(dest, src); \
 
 typedef struct LinuxBootOption {

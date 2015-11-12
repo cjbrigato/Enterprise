@@ -220,6 +220,10 @@ EFI_STATUS DisplayMenu(void) {
 	EFI_STATUS err;
 	UINT64 key;
 	boot_options = AllocateZeroPool(sizeof(CHAR16) * 150);
+	if (!boot_options) {
+		DisplayErrorText(L"Failed to allocate memory for boot options string.");
+		return EFI_OUT_OF_RESOURCES;
+	}
 	
 	start:
 	

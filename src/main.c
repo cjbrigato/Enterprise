@@ -224,6 +224,10 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 static void ReadConfigurationFile(const CHAR16 *name) {
 	/* This will always stay consistent, otherwise we'll lose the list in memory.*/
 	distributionListRoot = AllocateZeroPool(sizeof(BootableLinuxDistro));
+	if (!distributionListRoot) {
+		DisplayErrorText(L"Unable to allocate memory for linked list.");	
+	}
+
 	BootableLinuxDistro *conductor; // Will point to each node as we traverse the list.
 	
 	conductor = distributionListRoot; // Start by pointing at the first element.
@@ -245,6 +249,10 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 		// The user has put a given a distribution entry.
 		if (strcmpa((CHAR8 *)"entry", key) == 0) {
 			BootableLinuxDistro *new = AllocateZeroPool(sizeof(BootableLinuxDistro));
+			if (!new) {
+				DisplayErrorText(L"Failed to allocate memory for distribution entry.");
+			}
+
 			new->bootOption = AllocateZeroPool(sizeof(LinuxBootOption));
 			AllocateMemoryAndCopyChar8String(new->bootOption->name, value);
 			AllocateMemoryAndCopyChar8String(new->bootOption->iso_path, (CHAR8 *)"boot.iso"); // Set a default value.
@@ -287,6 +295,11 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 
 				// Allocate memory and begin the copy.
 				conductor->bootOption->kernel_path = AllocatePool(kernelStringLength + 1); // +1 is for null terminator
+				if (!conductor->bootOption->kernel_path) {
+					DisplayErrorText(L"Unable to allocate memory.");
+					Print(L" %s %d", __FILE__, __LINE__);
+				}
+
 				strncpya(conductor->bootOption->kernel_path, value, spaceCharPos);
 				*(conductor->bootOption->kernel_path + kernelStringLength) = '\0';
 				//Print(L"conductor->bootOption->kernel_path = %a\n", conductor->bootOption->kernel_path);
