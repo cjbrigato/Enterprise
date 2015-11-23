@@ -181,15 +181,15 @@ EFI_STATUS BootLinuxWithOptions(CHAR16 *params, UINT16 distribution) {
 	}
 	
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxBootOptions", kernel_parameters,
-		sizeof(kernel_parameters[0]) * strlena(kernel_parameters) + 1, FALSE);
+		sizeof(kernel_parameters[0]) * (strlena(kernel_parameters) + 1), FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_LinuxKernelPath", kernel_path,
-		sizeof(kernel_path[0]) * strlena(kernel_path) + 1, FALSE);
+		sizeof(kernel_path[0]) * (strlena(kernel_path) + 1), FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_InitRDPath", initrd_path,
-		sizeof(initrd_path[0]) * strlena(initrd_path) + 1, FALSE);
+		sizeof(initrd_path[0]) * (strlena(initrd_path) + 1), FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_ISOPath", iso_path,
-		sizeof(iso_path[0]) * strlena(iso_path) + 1, FALSE);
+		sizeof(iso_path[0]) * (strlena(iso_path) + 1), FALSE);
 	efi_set_variable(&grub_variable_guid, L"Enterprise_BootFolder", boot_folder,
-		sizeof(boot_folder[0]) * strlena(boot_folder) + 1, FALSE);
+		sizeof(boot_folder[0]) * (strlena(boot_folder) + 1), FALSE);
 	
 	// Load the EFI boot loader image into memory.
 	path = FileDevicePath(this_image->DeviceHandle, L"\\efi\\boot\\boot.efi");
@@ -229,7 +229,6 @@ static void ReadConfigurationFile(const CHAR16 *name) {
 	}
 
 	BootableLinuxDistro *conductor; // Will point to each node as we traverse the list.
-	
 	conductor = distributionListRoot; // Start by pointing at the first element.
 	
 	CHAR8 *contents;
